@@ -11,11 +11,13 @@ public class Line {
     String lineId;
     int num;
     ArrayList<Route> routesList;
+    private ArrayList<DisruptEvent> disruptEventList;
 
     public Line(int num, String lineId) {
         this.num = num;
         this.lineId = lineId;
-        this.routesList = new ArrayList<Route>();
+        this.routesList = new ArrayList<>();
+        this.disruptEventList = new ArrayList<>();
     }
 
     // Get
@@ -47,5 +49,13 @@ public class Line {
     // Add
     public void addRoute(Route r) {
         this.routesList.add(r);
+    }
+
+    public void removeDisruptEvent(DisruptEvent event) {
+        this.disruptEventList.remove(event);
+    }
+
+    public void addDisruptEvent(DisruptEvent event) {
+        this.disruptEventList.add(event);
     }
 }

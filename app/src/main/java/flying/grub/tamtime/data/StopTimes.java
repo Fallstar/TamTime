@@ -13,7 +13,7 @@ public class StopTimes {
     private Route route;
     private Line line;
     private int stopId;
-    private int ourId;
+    private String ourId;
     private OrderedTimes timesList; // Theoric Times
     private ArrayList<Integer> realTimesList; // Real Times
 
@@ -22,7 +22,7 @@ public class StopTimes {
         this.stop = stop;
         this.line = line;
         this.stopId = stopId;
-        this.ourId = Integer.parseInt("" + this.line.getLineNum() + this.route.getDirNum() + this.stop.getOurId());
+        this.ourId = this.line.getLineNum() + "" + this.route.getDirNum() + ":" + this.stop.getOurId();
         this.realTimesList = new ArrayList<Integer>();
         stop.addStpTim(this);
     }
@@ -84,7 +84,7 @@ public class StopTimes {
         }
     }
 
-    public int getOurId() {
+    public String getOurId() {
         return this.ourId;
     }
 

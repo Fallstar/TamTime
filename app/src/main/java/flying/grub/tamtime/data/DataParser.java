@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -39,15 +40,21 @@ import flying.grub.tamtime.R;
 public class DataParser {
 
     private static final String TAG = DataParser.class.getSimpleName();
+
     private final String JSON_PLAN = "http://bl00m.science/TamTimeData/map.json";
     private final String JSON_THEOTIME = "http://www.bl00m.science/TamTimeData/timesTest.json";
     private final String JSON_REALTIME = "http://www.tam-direct.com/webservice/data.php?pattern=getDetails";
     private final String JSON_REPORT = "http://tam.flyingrub.me/report.php?r=getJson";
     private final String POST_REPORT = "http://tam.flyingrub.me/report.php?r=newReport";
+    private static final String CONFIRM_REPORT = "http://tam.flyingrub.me/report.php?r=confirmReport";
+    private static final String JSON_ALL_DISRUPT = "http://www.tam-direct.com/webservice/data.php?pattern=cityway&path=GetDisruptedLines%2Fjson%3Fkey%3DTAM%26langID%3D1";
+    private static final String JSON_LINE_DISRUPT = "http://www.tam-direct.com/webservice/data.php?pattern=cityway&path=GetLineDisruptions%2Fjson%3Fkey%3DTAM%26langID%3D1%26ligID%3D";
+
     private ArrayList<Line> linesList;
     private ArrayList<Stop> stopList;
     private ArrayList<StopTimes> stpTimesList;
     private ArrayList<Report> reportList;
+    public ArrayList<DisruptEvent> disruptList;
 
     private static DataParser data;
 
@@ -309,6 +316,33 @@ public class DataParser {
         VolleyApp.getInstance(context).addToRequestQueue(sr);
     }
 
+    // Adapt this method for android with Voley or whatever
+    public void confirmReport(final Context context, final int reportId) {
+        Map<String,String> params = new HashMap<String, String>();
+        params.put("report_id", reportId + "");
+
+        StringRequest sr = new StringRequest(
+                Request.Method.POST,
+                CONFIRM_REPORT,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Integer result = Integer.parseInt(response);
+                        Log.d(TAG, "REPONSE:" + response + "|");
+                        Toast.makeText(context, context.getResources().getStringArray(R.array.post_status)[result], Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, "Error: " + error.getMessage());
+                    }
+                }) {
+        };
+        sr.setParams(params);
+        VolleyApp.getInstance(context).addToRequestQueue(sr);
+    }
+
     public void setupReport(Context context) {
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 JSON_REPORT, null,
@@ -339,7 +373,9 @@ public class DataParser {
 
             for (int i=0; i< reportListJson.length(); i++) {
                 JSONObject reportObjectJson = reportListJson.getJSONObject(i);
-                String msg = reportObjectJson.has("msg") ? reportObjectJson.getString("msg") : null;
+                String msg = reportObjectJson.optString("msg");
+                int confirm = reportObjectJson.getInt("confirm");
+                int reportId = reportObjectJson.getInt("report_id");
 
                 Calendar date = Calendar.getInstance();
                 try {
@@ -352,7 +388,7 @@ public class DataParser {
                 Stop stop = this.getStopByOurId(reportObjectJson.getInt("our_id"));
 
                 if (stop != null) {
-                    Report report = new Report(stop, ReportType.reportFromNum(reportObjectJson.getInt("type")), msg, date);
+                    Report report = new Report(stop, ReportType.reportFromNum(reportObjectJson.getInt("type")), msg, date, confirm, reportId);
                     this.reportList.add(report);
                 }
             }
@@ -361,9 +397,9 @@ public class DataParser {
         }
     }
 
-///////////////////////////
-// CityWay Distupt Event //
-///////////////////////////
+/************************
+* CityWay Distupt Event *
+************************/
 
     public ArrayList<JSONObject> getDisruptEventList() throws Exception {
         ArrayList<JSONObject> res = new ArrayList<>();
@@ -399,7 +435,7 @@ public class DataParser {
         return res;
     }
 
-    public void setDisruptEvent(ArrayList<JSONObject> jsonEventList) {
+    public void setDisruptEvent(ArrayList<JSONObject> jsonEventList) throws JSONException {
         Line line;
         String title;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -419,6 +455,18 @@ public class DataParser {
             }
         }
     }
+
+    public void addDisruptEvent(DisruptEvent event) {
+        this.disruptList.add(event);
+    }
+
+    public void removeDisruptEvent(DisruptEvent event) {
+        this.disruptList.remove(event);
+    }
+
+///////////////////////////
+// Getter and Setter     //
+///////////////////////////
 
     public void setAlldistance(Location user) {
         for (Stop stop : stopList) {
@@ -445,6 +493,13 @@ public class DataParser {
         return null;
     }
 
+    public Line getLineByNum(int num) {
+        for (Line l : this.linesList) {
+            if (l.getLineNum() == num) return l;
+        }
+        return null;
+    }
+
     public ArrayList<Line> getLinesList() {
         return linesList;
     }
@@ -467,9 +522,9 @@ public class DataParser {
         return null;
     }
 
-    public StopTimes getStopTimesByOurId(int ourId) {
+    public StopTimes getStopTimesByOurId(String ourId) {
         for (StopTimes st : this.stpTimesList) {
-            if (st.getOurId() == ourId) return st;
+            if (st.getOurId().equals(ourId)) return st;
         }
         return null;
     }

@@ -219,19 +219,16 @@ public class StopRouteFragment extends Fragment {
     }
 
     private void createAllReportDialog() {
-        boolean wrapInScrollView = false;
         String title = getActivity().getResources().getQuantityString(R.plurals.report, stop.getReports().size());
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .title(title)
-                .customView(R.layout.view_recycler, wrapInScrollView)
+                .customView(R.layout.view_recycler, false)
                 .positiveText(R.string.OK)
                 .build();
 
         View view = dialog.getCustomView();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -240,7 +237,6 @@ public class StopRouteFragment extends Fragment {
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity());
         recyclerView.addItemDecoration(itemDecoration);
-        // specify an adapter (see also next example)
 
         ReportAdapter adapter = new ReportAdapter(stop.getReports(), getActivity());
         recyclerView.setAdapter(adapter);
@@ -248,7 +244,8 @@ public class StopRouteFragment extends Fragment {
 
             @Override
             public void onItemClick(View v, int position) {
-                //Report
+                Report r = stop.getReports().get(position);
+                DataParser.getDataParser().confirmReport(getContext(), r.getReportId());
                 //createConfimationDialog(stop);
             }
         });

@@ -15,8 +15,6 @@ public class Report {
     private Calendar date;
     private int confirm;
     private int reportId;
-    private static final String CONFIRM_REPORT = "http://tam.flyingrub.me/report.php?r=confirmReport";
-
 
     public Report(Stop stop, ReportType type, String message, Calendar date, int confirm, int reportId) {
         this.stop = stop;
@@ -28,27 +26,10 @@ public class Report {
         stop.addReport(this);
     }
 
-    public String sendConfirm() {
-        String res;
-
-        HttpClient httpclient = HttpClients.createDefault();
-        HttpPost httppost = new HttpPost(CONFIRM_REPORT);
-
-        // Request parameters and other properties.
-        ArrayList<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("report_id", this.reportId + ""));
-
-        try {
-            httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity entity = response.getEntity();
-            res = EntityUtils.toString(entity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            res = null;
-        }
-
-        return res;
+    public Report(Stop stop, ReportType type, String message) {
+        this.stop = stop;
+        this.type = type;
+        this.message = message;
     }
 
     // Add
@@ -72,6 +53,10 @@ public class Report {
             timeStr = min + "min";
         }
         return timeStr;
+    }
+
+    public int getReportId() {
+        return reportId;
     }
 
     public int getConfirm() {
