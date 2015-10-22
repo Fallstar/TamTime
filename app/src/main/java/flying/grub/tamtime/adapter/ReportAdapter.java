@@ -55,7 +55,7 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         ViewHolderNormal hold = (ViewHolderNormal) holder;
         hold.title.setText(context.getResources().getStringArray(R.array.report_types)[report.getType().getValueForString()]);
         hold.time.setText(String.format(context.getString(R.string.ago), report.getTime()));
-        String the_cert = context.getResources().getQuantityString(R.plurals.report, report.getConfirm());
+        String the_cert = context.getResources().getQuantityString(R.plurals.the_cert, report.getConfirm());
         String certainty = String.format(context.getString(R.string.certainty), the_cert);
         hold.certainty.setText(certainty);
 

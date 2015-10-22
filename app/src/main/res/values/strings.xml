@@ -8,6 +8,7 @@
     <string name="all_stops_favs">Mes Arrêts</string>
     <string name="nearby_stop">Arrêts Proches</string>
     <string name="maps">La Carte</string>
+    <string name="reports">Les évenements</string>
 
     <string name="one_line">Ligne</string>
     <string name="no_favorite_stop">Pas d\'arrets favoris…</string>
@@ -29,11 +30,11 @@
     <string name="create_confirm_report">Voulez vous vraiment signaler l\'evenement %1$s pour la ligne %2$s?</string>
     <string name="confirm_confirm_report">Voulez vous vraiment confirmer l\'evenement %1$s pour la ligne %2$s?</string>
     <string name="input_report">Décrivez l\'évenement</string>
-    <string name="certainty">%s certitude</string>
+    <string name="certainty">Certitude %s</string>
     <plurals name="the_cert">
-        <item quantity="one">Faible</item>
-        <item quantity="two">Moyenne</item>
-        <item quantity="other">Forte</item>
+        <item quantity="zero">faible</item>
+        <item quantity="one">moyenne</item>
+        <item quantity="other">forte</item>
     </plurals>
     <string name="ago">il y a %s</string>
     <plurals name="report">

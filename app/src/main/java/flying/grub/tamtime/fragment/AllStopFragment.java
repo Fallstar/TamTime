@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -90,15 +91,13 @@ public class AllStopFragment extends Fragment {
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                currentDisplayedStop = DataParser.getDataParser().searchInStops(query);
-                recyclerView.swapAdapter(new AllStopAdapter(currentDisplayedStop), false);
+                new SearchAsync().execute(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                currentDisplayedStop = DataParser.getDataParser().searchInStops(newText);
-                recyclerView.swapAdapter(new AllStopAdapter(currentDisplayedStop), false);
+                //new SearchAsync().execute(newText);
                 return false;
             }
         });
@@ -135,5 +134,18 @@ public class AllStopFragment extends Fragment {
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
     }
+
+    private class SearchAsync extends AsyncTask<String, String, ArrayList<Stop>> {
+        protected ArrayList<Stop> doInBackground(String... strings) {
+            String s = strings[0];
+            return DataParser.getDataParser().searchInStops(s);
+        }
+
+        protected void onPostExecute(ArrayList<Stop> stops) {
+            currentDisplayedStop = stops;
+            recyclerView.swapAdapter(new AllStopAdapter(currentDisplayedStop), false);
+        }
+    }
+
 
 }

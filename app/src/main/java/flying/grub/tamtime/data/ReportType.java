@@ -12,19 +12,19 @@ public enum ReportType {
        return this.value;
     }
 
-    public static ReportType reportFromNum(int num) {
+    public static ReportType reportFromId(int id) {
         ReportType res;
-        switch (num) {
-            case 0:
+        switch (id) {
+            case 1:
                 res = ReportType.CONTROLE_Q;
                 break;
-            case 1:
+            case 2:
                 res = ReportType.CONTROLE_T;
                 break;
-            case 2:
+            case 3:
                 res = ReportType.INCIDENT;
                 break;
-            case 3:
+            case 4:
                 res = ReportType.AUTRE;
                 break;
             default:
@@ -32,6 +32,10 @@ public enum ReportType {
                 break;
         }
         return res;
+    }
+
+    public static ReportType reportFromPosition(int pos) {
+        return reportFromId(pos +1);
     }
 
     public int getValueForString() {

@@ -3,11 +3,13 @@ package flying.grub.tamtime.navigation;
 import android.graphics.drawable.Drawable;
 
 public class ItemWithDrawable {
+    private int id;
     private String text;
     private Drawable drawable;
     private boolean isHeader;
 
-    public ItemWithDrawable(String text, Drawable drawable, boolean header) {
+    public ItemWithDrawable(int id, String text, Drawable drawable, boolean header) {
+        this.id = id;
         this.text = text;
         this.drawable = drawable;
         this.isHeader = header;
@@ -17,7 +19,9 @@ public class ItemWithDrawable {
         return text;
     }
 
-
+    public int getId() {
+        return id;
+    }
     public Drawable getDrawable() {
         return drawable;
     }

@@ -18,12 +18,14 @@ import flying.grub.tamtime.data.DataParser;
 import flying.grub.tamtime.data.FavoriteStops;
 import flying.grub.tamtime.fragment.AllLinesFragment;
 import flying.grub.tamtime.fragment.AllStopFragment;
+import flying.grub.tamtime.fragment.AllStopReport;
 import flying.grub.tamtime.fragment.FavoriteStopsFragment;
 import flying.grub.tamtime.fragment.NavigationDrawerFragment;
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.fragment.NearStopFragment;
 import flying.grub.tamtime.fragment.WebFragment;
 import flying.grub.tamtime.navigation.DrawerCallback;
+import flying.grub.tamtime.navigation.ItemWithDrawable;
 
 public class MainActivity extends AppCompatActivity implements DrawerCallback {
 
@@ -66,48 +68,54 @@ public class MainActivity extends AppCompatActivity implements DrawerCallback {
     }
 
     @Override
-    public void onDrawerClick(int position) {
+    public void onDrawerClick(ItemWithDrawable element) {
         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment;
         Intent intent;
-        switch (position) {
-            case 0:
+        switch (element.getId()) {
+            case 1:
                 fragment = new AllLinesFragment();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack("");
                 transaction.commit();
                 break;
-            case 1:
+            case 2:
                 fragment = new AllStopFragment();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack("");
                 transaction.commit();
                 break;
-            case 2:
+            case 3:
                 fragment = new FavoriteStopsFragment();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack("");
                 transaction.commit();
                 break;
-            case 3:
+            case 4:
                 fragment = new NearStopFragment();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack("");
                 transaction.commit();
                 break;
-            case 4:
+            case 5:
                 WebFragment webFragment = WebFragment.newInstance(MAP_URL);
                 transaction.replace(R.id.container, webFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
             case 6:
+                fragment = new AllStopReport();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack("");
+                transaction.commit();
+                break;
+            case 7:
                 NavigationDrawerFragment.currentSelectedPosition.setI(0);
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
                 break;
-            case 7:
+            case 8:
                 NavigationDrawerFragment.currentSelectedPosition.setI(0);
                 intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);

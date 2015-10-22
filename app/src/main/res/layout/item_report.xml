@@ -42,7 +42,7 @@
         android:textColor="@color/textDarkClearColor"
         android:text="Forte Certitude"
         android:layout_below="@+id/title"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:layout_alignLeft="@+id/title"
         android:layout_alignStart="@+id/title" />
 

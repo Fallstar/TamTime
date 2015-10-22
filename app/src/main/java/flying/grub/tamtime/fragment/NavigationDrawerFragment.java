@@ -38,6 +38,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private DrawerCallback drawerCallback;
     private NavigationDrawerAdapter drawerAdapter;
+    private ArrayList<ItemWithDrawable> drawerElements;
 
     private boolean userLearnedDrawer;
     public static IntRef currentSelectedPosition = new IntRef(0);
@@ -56,7 +57,9 @@ public class NavigationDrawerFragment extends Fragment {
 
         getActivity().setTitle(getString(R.string.app_name));
 
-        drawerAdapter = new NavigationDrawerAdapter(getItems(), currentSelectedPosition);
+        setItems();
+
+        drawerAdapter = new NavigationDrawerAdapter(drawerElements, currentSelectedPosition);
         recyclerView.setAdapter(drawerAdapter);
         drawerAdapter.SetOnItemClickListener(new NavigationDrawerAdapter.OnItemClickListener() {
             @Override
@@ -80,17 +83,19 @@ public class NavigationDrawerFragment extends Fragment {
         selectItem(currentSelectedPosition.getI());
     }
 
-    private ArrayList<ItemWithDrawable> getItems() {
-        ArrayList<ItemWithDrawable> itemWithDrawables = new ArrayList<>();
-        itemWithDrawables.add(new ItemWithDrawable(getString(R.string.all_lines), getResources().getDrawable(R.drawable.ic_directions_subway_black_24dp), false));
-        itemWithDrawables.add(new ItemWithDrawable(getString(R.string.all_stops), getResources().getDrawable(R.drawable.ic_place_black_24dp), false));
-        itemWithDrawables.add(new ItemWithDrawable(getString(R.string.all_stops_favs), getResources().getDrawable(R.drawable.ic_favorite_black_24dp), false));
-        itemWithDrawables.add(new ItemWithDrawable(getString(R.string.nearby_stop), getResources().getDrawable(R.drawable.ic_my_location_black_24dp), false));
-        itemWithDrawables.add(new ItemWithDrawable(getString(R.string.maps), getResources().getDrawable(R.drawable.ic_map_black_24dp), false));
-        itemWithDrawables.add(new ItemWithDrawable(null, null, true));
-        itemWithDrawables.add(new ItemWithDrawable(getString(R.string.settings), getResources().getDrawable(R.drawable.ic_settings_black_24dp), false));
-        itemWithDrawables.add(new ItemWithDrawable(getString(R.string.app_info), getResources().getDrawable(R.drawable.ic_info_black_24dp), false));
-        return itemWithDrawables;
+    private ArrayList<ItemWithDrawable> setItems() {
+        drawerElements = new ArrayList<>();
+        drawerElements.add(new ItemWithDrawable(1, getString(R.string.all_lines), getResources().getDrawable(R.drawable.ic_directions_subway_black_24dp), false));
+        drawerElements.add(new ItemWithDrawable(2, getString(R.string.all_stops), getResources().getDrawable(R.drawable.ic_place_black_24dp), false));
+        drawerElements.add(new ItemWithDrawable(3, getString(R.string.all_stops_favs), getResources().getDrawable(R.drawable.ic_favorite_black_24dp), false));
+        drawerElements.add(new ItemWithDrawable(-1, null, null, true));
+        drawerElements.add(new ItemWithDrawable(4, getString(R.string.nearby_stop), getResources().getDrawable(R.drawable.ic_my_location_black_24dp), false));
+        drawerElements.add(new ItemWithDrawable(5, getString(R.string.maps), getResources().getDrawable(R.drawable.ic_map_black_24dp), false));
+        drawerElements.add(new ItemWithDrawable(6, getString(R.string.reports), getResources().getDrawable(R.drawable.ic_warning_black_24dp), false));
+        drawerElements.add(new ItemWithDrawable(-1, null, null, true));
+        drawerElements.add(new ItemWithDrawable(7, getString(R.string.settings), getResources().getDrawable(R.drawable.ic_settings_black_24dp), false));
+        drawerElements.add(new ItemWithDrawable(8, getString(R.string.app_info), getResources().getDrawable(R.drawable.ic_info_black_24dp), false));
+        return drawerElements;
     }
 
     public void setup(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar) {
@@ -163,7 +168,7 @@ public class NavigationDrawerFragment extends Fragment {
             drawerLayout.closeDrawer(containerView);
         }
         if (drawerCallback != null) {
-            drawerCallback.onDrawerClick(position);
+            drawerCallback.onDrawerClick(drawerElements.get(position));
         }
     }
 

@@ -26,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
@@ -329,7 +330,7 @@ public class DataParser {
                     public void onResponse(String response) {
                         Integer result = Integer.parseInt(response);
                         Log.d(TAG, "REPONSE:" + response + "|");
-                        Toast.makeText(context, context.getResources().getStringArray(R.array.post_status)[result], Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getResources().getStringArray(R.array.confirm_status)[result], Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
@@ -388,7 +389,7 @@ public class DataParser {
                 Stop stop = this.getStopByOurId(reportObjectJson.getInt("our_id"));
 
                 if (stop != null) {
-                    Report report = new Report(stop, ReportType.reportFromNum(reportObjectJson.getInt("type")), msg, date, confirm, reportId);
+                    Report report = new Report(stop, ReportType.reportFromId(reportObjectJson.getInt("type")), msg, date, confirm, reportId);
                     this.reportList.add(report);
                 }
             }
@@ -468,13 +469,15 @@ public class DataParser {
 // Getter and Setter     //
 ///////////////////////////
 
+    // SETTER
+
     public void setAlldistance(Location user) {
         for (Stop stop : stopList) {
             stop.calcDistanceFromUser(user);
         }
     }
 
-    // Add
+    // ADD
     public void addStop(Stop s){
         this.stopList.add(s);
     }
@@ -487,7 +490,7 @@ public class DataParser {
         this.stpTimesList.add(srl);
     }
 
-    // Get
+    // GET
     public Line getLine(int i){
         if (linesList != null) return linesList.get(i);
         return null;
@@ -529,7 +532,42 @@ public class DataParser {
         return null;
     }
 
-        // Return the StopTimes which correspond to line/direction/stopId
+    public ArrayList<Stop> getAllNearStops() {
+        ArrayList<Stop> res = new ArrayList<>();
+        for (Stop s : stopList) {
+            if (s.getDistanceFromUser() <= 500) { // in meter
+                res.add(s);
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<Stop> searchInStops(String search) {
+        ArrayList<Stop> res = new ArrayList<>();
+        for (Stop s : stopList) {
+            if (normalize(s.getName()).contains(normalize(search))) {
+                res.add(s);
+            }
+        }
+        return res;
+    }
+
+    public String normalize(String s) {
+        String normalized = Normalizer.normalize(s, Normalizer.Form.NFD);
+        return normalized.replaceAll("[^\\p{ASCII}]", "").toLowerCase().replaceAll("[^A-Za-z0-9]", "");
+    }
+
+    public ArrayList<Stop> getAllReportStop() {
+        ArrayList<Stop> res = new ArrayList<>();
+        for (Stop s : stopList) {
+            if (s.getReports().size() > 0) {
+                res.add(s);
+            }
+        }
+        return res;
+    }
+
+    // Return the StopTimes which correspond to line/direction/stopId
     public StopTimes getTheStopTimes(String line, String direction, int stopId) {
         int linum = line.contains("L") ? Integer.parseInt(line.replace("L", "")) : Integer.parseInt(line);
 
@@ -557,26 +595,6 @@ public class DataParser {
         for (StopTimes stp : stpTimesList) {
             stp.resetRealTimes();
         }
-    }
-
-    public ArrayList<Stop> getAllNearStops() {
-        ArrayList<Stop> res = new ArrayList<>();
-        for (Stop s : stopList) {
-            if (s.getDistanceFromUser() <= 500) { // in meter
-                res.add(s);
-            }
-        }
-        return res;
-    }
-
-    public ArrayList<Stop> searchInStops(String search) {
-        ArrayList<Stop> res = new ArrayList<>();
-        for (Stop s : stopList) {
-            if (s.getName().toLowerCase().contains(search.toLowerCase())) {
-                res.add(s);
-            }
-        }
-        return res;
     }
 
 }

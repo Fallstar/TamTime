@@ -117,7 +117,6 @@ public class StopRouteFragment extends Fragment {
                 createReportDialog();
                 return true;
             case R.id.report_warn:
-                Log.d(TAG, stop.getReports().toString());
                 createAllReportDialog();
                 return true;
             default:
@@ -176,7 +175,7 @@ public class StopRouteFragment extends Fragment {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        if (ReportType.reportFromNum(which) == ReportType.AUTRE) {
+                        if (ReportType.reportFromPosition(which) == ReportType.AUTRE) {
                             createInputDialog();
                             return;
                         }
@@ -198,7 +197,7 @@ public class StopRouteFragment extends Fragment {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        DataParser.getDataParser().sendReport(getActivity(), new Report(stop, ReportType.reportFromNum(position), message));
+                        DataParser.getDataParser().sendReport(getActivity(), new Report(stop, ReportType.reportFromPosition(position), message));
                         DataParser.getDataParser().update(getActivity());
                         dialog.dismiss();
                     }
@@ -207,7 +206,7 @@ public class StopRouteFragment extends Fragment {
     }
 
     private void confirmConfirmationDialog(final int position) {
-        String content = String.format(getString(R.string.confirm_confirm_report), getResources().getStringArray(R.array.report_types)[position], line.getLineId());
+        String content = String.format(getString(R.string.confirm_confirm_report), getResources().getStringArray(R.array.report_types)[stop.getReports().get(position).getType().getValueForString()], line.getLineId());
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .title(R.string.confirm_report_title)
                 .content(content)
@@ -231,7 +230,7 @@ public class StopRouteFragment extends Fragment {
                 .input(R.string.none, R.string.none, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
-                        createConfimationDialog(ReportType.AUTRE.getValue(), input.toString());
+                        createConfimationDialog(ReportType.AUTRE.getValueForString(), input.toString());
                     }
                 }).show();
     }
