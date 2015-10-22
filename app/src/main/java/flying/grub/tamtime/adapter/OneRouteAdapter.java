@@ -1,11 +1,17 @@
 package flying.grub.tamtime.adapter;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,6 +29,8 @@ public class OneRouteAdapter extends RecyclerView.Adapter<OneRouteAdapter.ViewHo
     private ArrayList<StopTimes> stops;
     private boolean isTheoritical;
 
+    private Context context;
+
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
@@ -31,13 +39,14 @@ public class OneRouteAdapter extends RecyclerView.Adapter<OneRouteAdapter.ViewHo
         this.mItemClickListener = mItemClickListener;
     }
 
-    public OneRouteAdapter(ArrayList<StopTimes> stops) {
+    public OneRouteAdapter(ArrayList<StopTimes> stops, Context context) {
+        this.context = context;
         this.stops = stops;
         this.isTheoritical = false;
     }
 
-    public OneRouteAdapter(ArrayList<StopTimes> stops, boolean isTheoritical) {
-        this.stops = stops;
+    public OneRouteAdapter(ArrayList<StopTimes> stops, Context context, boolean isTheoritical) {
+        this(stops, context);
         this.isTheoritical = isTheoritical;
     }
 
@@ -55,12 +64,18 @@ public class OneRouteAdapter extends RecyclerView.Adapter<OneRouteAdapter.ViewHo
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         StopTimes stop = stops.get(position);
-        holder.mStop.setText(stop.getStop().getName());
+        holder.stop.setText(stop.getStop().getName());
 
         ArrayList<String> times = stop.getStrNextTimes(3); // Request 3 next times
         holder.tps1.setText(times.get(0));
         holder.tps2.setText(times.get(1));
         holder.tps3.setText(times.get(2));
+
+        if (stops.get(position).getStop().getReports().size() > 0) {
+            Drawable draw = context.getResources().getDrawable(R.drawable.ic_warning_black_18dp).getConstantState().newDrawable().mutate();
+            draw.setColorFilter(Color.parseColor("#616161"), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.setImageDrawable(draw);
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -71,20 +86,22 @@ public class OneRouteAdapter extends RecyclerView.Adapter<OneRouteAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView mStop;
+        public TextView stop;
         public TextView tps1;
         public TextView tps2;
         public TextView tps3;
-        public LinearLayout linearLayout;
+        public ImageView icon;
+        public RelativeLayout relativeLayout;
 
 
         public ViewHolder(View v) {
             super(v);
-            mStop = (TextView) itemView.findViewById(R.id.title);
+            stop = (TextView) itemView.findViewById(R.id.title);
             tps1 = (TextView) itemView.findViewById(R.id.tps1);
             tps2 = (TextView) itemView.findViewById(R.id.tps2);
             tps3 = (TextView) itemView.findViewById(R.id.tps3);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.element);
+            icon = (ImageView) itemView.findViewById(R.id.icon);
+            relativeLayout = (RelativeLayout) itemView.findViewById(R.id.element);
             v.setOnClickListener(this);
         }
 

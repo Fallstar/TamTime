@@ -128,7 +128,7 @@ public class LineRouteFragment extends Fragment {
 
         route = DataParser.getDataParser().getLine(linePosition).getRoutes().get(routePosition);
 
-        adapter = new OneRouteAdapter(route.getStpTimes(), isTheoritical);
+        adapter = new OneRouteAdapter(route.getStpTimes(), getContext(), isTheoritical);
 
         recyclerView.setAdapter(adapter);
         adapter.SetOnItemClickListener(new OneRouteAdapter.OnItemClickListener() {
@@ -200,7 +200,7 @@ public class LineRouteFragment extends Fragment {
         if (event.type == MessageEvent.Type.TIMESUPDATE) {
             getActivity().invalidateOptionsMenu();
             route = DataParser.getDataParser().getLine(linePosition).getRoutes().get(routePosition);
-            adapter = new OneRouteAdapter(route.getStpTimes(), isTheoritical);
+            adapter = new OneRouteAdapter(route.getStpTimes(), getContext(), isTheoritical);
             adapter.SetOnItemClickListener(new OneRouteAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
