@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import flying.grub.tamtime.R;
@@ -37,10 +39,14 @@ public class FavoriteStopsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.view_recycler, container, false);
+        View view = inflater.inflate(R.layout.view_recycler_load, container, false);
         setHasOptionsMenu(true);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.progress);
+        linearLayout.setVisibility(View.GONE);
+        TextView textView = (TextView) view.findViewById(R.id.empty_view);
+        textView.setText(getString(R.string.no_favorite_stop));
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -53,6 +59,13 @@ public class FavoriteStopsFragment extends Fragment {
 
         favoriteStops = new FavoriteStops(getActivity());
         getActivity().setTitle(getString(R.string.all_stops_favs));
+
+        if (favoriteStops.getFavoriteStop().size() == 0) {
+            textView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            return view;
+        } else {
+        }
 
         adapter = new FavoriteAdapter(favoriteStops.getFavoriteStop());
         recyclerView.setAdapter(adapter);
