@@ -1,7 +1,7 @@
 package flying.grub.tamtime.data;
 
 public enum ReportType {
-    CONTROLE_Q(0), CONTROLE_T(1), INCIDENT(2), AUTRE(3);
+    CONTROLE_Q(1), CONTROLE_T(2), INCIDENT(3), AUTRE(4);
     private int value;
 
     ReportType(int value) {
@@ -32,5 +32,9 @@ public enum ReportType {
                 break;
         }
         return res;
+    }
+
+    public int getValueForString() {
+        return this.value -1;
     }
 }

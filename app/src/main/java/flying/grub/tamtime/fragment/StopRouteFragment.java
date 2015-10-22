@@ -176,7 +176,7 @@ public class StopRouteFragment extends Fragment {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        if (which == 3) {
+                        if (ReportType.reportFromNum(which) == ReportType.AUTRE) {
                             createInputDialog();
                             return;
                         }
@@ -231,7 +231,7 @@ public class StopRouteFragment extends Fragment {
                 .input(R.string.none, R.string.none, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
-                        createConfimationDialog(3, input.toString());
+                        createConfimationDialog(ReportType.AUTRE.getValue(), input.toString());
                     }
                 }).show();
     }
