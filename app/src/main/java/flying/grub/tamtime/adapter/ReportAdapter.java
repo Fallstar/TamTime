@@ -51,15 +51,17 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Report report = reports.get(position);
+
+        ViewHolderNormal hold = (ViewHolderNormal) holder;
+        hold.title.setText(context.getResources().getStringArray(R.array.report_types)[report.getType().getValue()]);
+        hold.time.setText(String.format(context.getString(R.string.ago), report.getTime()));
+        String the_cert = context.getResources().getQuantityString(R.plurals.report, report.getConfirm());
+        String certainty = String.format(context.getString(R.string.certainty), the_cert);
+        hold.certainty.setText(certainty);
+
         if (holder instanceof ViewHolderExtended && report.getType() == ReportType.AUTRE) {
-            ViewHolderExtended hold = (ViewHolderExtended) holder;
-            hold.title.setText(context.getResources().getStringArray(R.array.report_types)[report.getType().getValue()]);
-            hold.content.setText(report.getMessage());
-            hold.time.setText(String.format(context.getString(R.string.ago), report.getTime()));
-        } else if (holder instanceof ViewHolderNormal && report.getType() != ReportType.AUTRE) {
-            ViewHolderNormal hold = (ViewHolderNormal) holder;
-            hold.title.setText(context.getResources().getStringArray(R.array.report_types)[report.getType().getValue()]);
-            hold.time.setText(String.format(context.getString(R.string.ago), report.getTime()));
+            ViewHolderExtended holderExtended = (ViewHolderExtended) holder;
+            holderExtended.content.setText(report.getMessage());
         }
     }
 
@@ -89,12 +91,14 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         public TextView title;
         public TextView time;
+        public TextView certainty;
         public RelativeLayout relativeLayout;
 
         public ViewHolderNormal(View v) {
             super(v);
             title = (TextView) itemView.findViewById(R.id.title);
             time = (TextView) itemView.findViewById(R.id.time);
+            certainty = (TextView) itemView.findViewById(R.id.certainty);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.element);
             v.setOnClickListener(this);
         }
@@ -107,27 +111,13 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public class ViewHolderExtended extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolderExtended extends ViewHolderNormal {
 
-        public TextView title;
-        public TextView time;
         public TextView content;
-        public RelativeLayout relativeLayout;
 
         public ViewHolderExtended(View v) {
             super(v);
-            title = (TextView) itemView.findViewById(R.id.title);
             content = (TextView) itemView.findViewById(R.id.content);
-            time = (TextView) itemView.findViewById(R.id.time);
-            relativeLayout = (RelativeLayout) itemView.findViewById(R.id.element);
-            v.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(v, getAdapterPosition());
-            }
         }
     }
 

@@ -189,7 +189,7 @@ public class StopRouteFragment extends Fragment {
     }
 
     private void createConfimationDialog(final int position, final String message) {
-        String content = String.format(getString(R.string.confirm_report), getResources().getStringArray(R.array.report_types)[position], line.getLineId());
+        String content = String.format(getString(R.string.create_confirm_report), getResources().getStringArray(R.array.report_types)[position], line.getLineId());
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .title(R.string.confirm_report_title)
                 .content(content)
@@ -200,6 +200,24 @@ public class StopRouteFragment extends Fragment {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         DataParser.getDataParser().sendReport(getActivity(), new Report(stop, ReportType.reportFromNum(position), message));
                         DataParser.getDataParser().update(getActivity());
+                        dialog.dismiss();
+                    }
+                }).build();
+        dialog.show();
+    }
+
+    private void confirmConfirmationDialog(final int position) {
+        String content = String.format(getString(R.string.confirm_confirm_report), getResources().getStringArray(R.array.report_types)[position], line.getLineId());
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.confirm_report_title)
+                .content(content)
+                .negativeText(R.string.no)
+                .positiveText(R.string.yes)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Report r = stop.getReports().get(position);
+                        DataParser.getDataParser().confirmReport(getContext(), r.getReportId());
                         dialog.dismiss();
                     }
                 }).build();
@@ -244,9 +262,7 @@ public class StopRouteFragment extends Fragment {
 
             @Override
             public void onItemClick(View v, int position) {
-                Report r = stop.getReports().get(position);
-                DataParser.getDataParser().confirmReport(getContext(), r.getReportId());
-                //createConfimationDialog(stop);
+                confirmConfirmationDialog(position);
             }
         });
         dialog.show();
