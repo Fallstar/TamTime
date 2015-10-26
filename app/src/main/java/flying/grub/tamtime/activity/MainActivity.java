@@ -1,24 +1,17 @@
 package flying.grub.tamtime.activity;
 
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import flying.grub.tamtime.data.DataParser;
-import flying.grub.tamtime.data.FavoriteStops;
 import flying.grub.tamtime.fragment.AllLinesFragment;
 import flying.grub.tamtime.fragment.AllStopFragment;
-import flying.grub.tamtime.fragment.AllStopReport;
+import flying.grub.tamtime.fragment.AllStopReportFragment;
 import flying.grub.tamtime.fragment.FavoriteStopsFragment;
 import flying.grub.tamtime.fragment.NavigationDrawerFragment;
 import flying.grub.tamtime.R;
@@ -104,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements DrawerCallback {
                 transaction.commit();
                 break;
             case 6:
-                fragment = new AllStopReport();
+                fragment = new AllStopReportFragment();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack("");
                 transaction.commit();

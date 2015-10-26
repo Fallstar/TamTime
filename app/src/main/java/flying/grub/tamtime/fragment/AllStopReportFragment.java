@@ -27,7 +27,7 @@ import flying.grub.tamtime.data.Stop;
 /**
  * Created by fly on 10/22/15.
  */
-public class AllStopReport extends Fragment {
+public class AllStopReportFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private AllStopReportAdapter adapter;
@@ -44,7 +44,7 @@ public class AllStopReport extends Fragment {
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.progress);
         linearLayout.setVisibility(View.GONE);
         TextView textView = (TextView) view.findViewById(R.id.empty_view);
-        textView.setText(getString(R.string.no_favorite_stop));
+        textView.setText(getString(R.string.no_report));
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
