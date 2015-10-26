@@ -46,6 +46,10 @@ public class Line {
         return this.num;
     }
 
+    public ArrayList<DisruptEvent> getDisruptEventList() {
+        return disruptEventList;
+    }
+
     // Add
     public void addRoute(Route r) {
         this.routesList.add(r);

@@ -70,7 +70,8 @@ public class OneLineActivity extends AppCompatActivity {
         slidingTabLayout.setDividerColors(getResources().getColor(R.color.primaryColor));
         slidingTabLayout.setViewPager(viewPager);
 
-        if (false) { // to be replaced
+        Log.d(TAG, line.getDisruptEventList() + "");
+        if (line.getDisruptEventList().size() > 0) {
             showInfo("Preturbation en cours sur la ligne...");
         }
     }

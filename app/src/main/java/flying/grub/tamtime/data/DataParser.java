@@ -42,20 +42,21 @@ public class DataParser {
 
     private static final String TAG = DataParser.class.getSimpleName();
 
-    private final String JSON_PLAN = "http://bl00m.science/TamTimeData/map.json";
-    private final String JSON_THEOTIME = "http://www.bl00m.science/TamTimeData/timesTest.json";
-    private final String JSON_REALTIME = "http://www.tam-direct.com/webservice/data.php?pattern=getDetails";
-    private final String JSON_REPORT = "http://tam.flyingrub.me/report.php?r=getJson";
-    private final String POST_REPORT = "http://tam.flyingrub.me/report.php?r=newReport";
+    private static final String JSON_PLAN = "http://bl00m.science/TamTimeData/map.json";
+    private static final String JSON_THEOTIME = "http://www.bl00m.science/TamTimeData/timesTest.json";
+    private static final String JSON_REALTIME = "http://www.tam-direct.com/webservice/data.php?pattern=getDetails";
+    private static final String JSON_REPORT = "http://tam.flyingrub.me/report.php?r=getJson";
+    private static final String POST_REPORT = "http://tam.flyingrub.me/report.php?r=newReport";
     private static final String CONFIRM_REPORT = "http://tam.flyingrub.me/report.php?r=confirmReport";
-    private static final String JSON_ALL_DISRUPT = "http://www.tam-direct.com/webservice/data.php?pattern=cityway&path=GetDisruptedLines%2Fjson%3Fkey%3DTAM%26langID%3D1";
-    private static final String JSON_LINE_DISRUPT = "http://www.tam-direct.com/webservice/data.php?pattern=cityway&path=GetLineDisruptions%2Fjson%3Fkey%3DTAM%26langID%3D1%26ligID%3D";
+
 
     private ArrayList<Line> linesList;
     private ArrayList<Stop> stopList;
     private ArrayList<StopTimes> stpTimesList;
     private ArrayList<Report> reportList;
-    public ArrayList<DisruptEvent> disruptList;
+
+
+    private HandlerDistuptEvent handlerDistuptEvent;
 
     private static DataParser data;
 
@@ -64,13 +65,14 @@ public class DataParser {
         this.linesList = new ArrayList<>();
         this.stpTimesList = new ArrayList<>();
         this.reportList = new ArrayList<>();
-        this.data = this;
+        data = this;
     }
 
     public void init(Context context) {
         setupMap(context);
         setupRealTimes(context);
         setupReport(context);
+        setupDistuptEvent(context);
         //setupTheoTimes(context);
     }
 
@@ -402,68 +404,20 @@ public class DataParser {
 * CityWay Distupt Event *
 ************************/
 
-    public ArrayList<JSONObject> getDisruptEventList() throws Exception {
-        ArrayList<JSONObject> res = new ArrayList<>();
-        URL request = new URL(JSON_ALL_DISRUPT);
-        Scanner scanner = new Scanner(request.openStream());
-        String response = scanner.useDelimiter("\\Z").next();
-        scanner.close();
-        JSONArray list = (new JSONObject(response)).getJSONObject("DisruptionServiceObj").getJSONArray("Line");
-        for (int i=0; i<list.length(); i++) {
-            try {
-                res.addAll(this.getLineDisruptEvent(list.getJSONObject(i).getInt("id")));
-            } catch (Exception e) {
-                System.err.println(JSON_LINE_DISRUPT + list.getJSONObject(i).getInt("id"));
-                e.printStackTrace();
-            }
-        }
-        return res;
-    }
-
-    public ArrayList<JSONObject> getLineDisruptEvent(int linkId) throws Exception {
-        URL request = new URL(JSON_LINE_DISRUPT + linkId);
-        Scanner scanner = new Scanner(request.openStream());
-        String response = scanner.useDelimiter("\\Z").next();
-        scanner.close();
-        JSONObject all = new JSONObject(response);
-        JSONArray resJson = all.getJSONObject("DisruptionServiceObj").optJSONArray("Disruption");
-        ArrayList<JSONObject> res = new ArrayList<JSONObject>();
-        if (resJson != null) {
-            for (int i=0; i<resJson.length(); i++) res.add(resJson.getJSONObject(i));
-        } else {
-            res.add(all.getJSONObject("DisruptionServiceObj").getJSONObject("Disruption"));
-        }
-        return res;
-    }
-
-    public void setDisruptEvent(ArrayList<JSONObject> jsonEventList) throws JSONException {
-        Line line;
-        String title;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        while (this.disruptList.size() > 0) this.disruptList.get(0).destroy(); // Clear all the disrupt event
-        for (JSONObject eventJson : jsonEventList) {
-            line = getLineByNum(eventJson.getJSONObject("DisruptedLine").getInt("number"));
-            Calendar beginDate = Calendar.getInstance();
-            Calendar endDate = Calendar.getInstance();
-            try {
-                beginDate.setTime(sdf.parse(eventJson.getString("beginValidityDate").replace("T", " ")));
-                endDate.setTime(sdf.parse(eventJson.getString("endValidityDate").replace("T", " ")));
-                title = eventJson.getString("title");
-                new DisruptEvent(this, line, beginDate, endDate, title); //The event put himself in Data & Line ArrayList
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public void setupDistuptEvent(Context context) {
+        handlerDistuptEvent = new HandlerDistuptEvent(context);
+        handlerDistuptEvent.setData();
     }
 
     public void addDisruptEvent(DisruptEvent event) {
-        this.disruptList.add(event);
+        handlerDistuptEvent.addDisruptEvent(event);
     }
 
     public void removeDisruptEvent(DisruptEvent event) {
-        this.disruptList.remove(event);
+        handlerDistuptEvent.removeDisruptEvent(event);
     }
+
+
 
 ///////////////////////////
 // Getter and Setter     //
