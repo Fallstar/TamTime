@@ -217,7 +217,7 @@ public class DataParser {
             e.printStackTrace();
         }
 
-        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.TIMESUPDATE));
+        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.TIMES_UPDATE));
     }
 
 ///////////////////

@@ -128,7 +128,7 @@ public class AllLinesFragment extends Fragment {
     }
 
     public void onEvent(MessageEvent event){
-        if (event.type == MessageEvent.Type.LINESUPDATE) {
+        if (event.type == MessageEvent.Type.LINES_UPDATE) {
             lines = DataParser.getDataParser().getLinesList();
             recyclerView.swapAdapter(new AllLinesAdapter(lines), false);
         }

@@ -5,8 +5,10 @@ package flying.grub.tamtime.data;
  */
 public class MessageEvent {
     public enum Type {
-        TIMESUPDATE,
-        LINESUPDATE,
+        TIMES_UPDATE,
+        LINES_UPDATE,
+        EVENT_UPDATE,
+        REPORT_UPDATE
     }
 
     public final Type type;

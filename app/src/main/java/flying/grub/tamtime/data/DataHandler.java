@@ -6,4 +6,5 @@ package flying.grub.tamtime.data;
 public interface DataHandler {
 
     void setData();
+    void dataUpdate();
 }

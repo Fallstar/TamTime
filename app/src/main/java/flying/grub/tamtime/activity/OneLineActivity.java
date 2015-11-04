@@ -19,8 +19,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
+import de.greenrobot.event.EventBus;
+import flying.grub.tamtime.adapter.OneRouteAdapter;
 import flying.grub.tamtime.data.DataParser;
 import flying.grub.tamtime.data.Line;
+import flying.grub.tamtime.data.MessageEvent;
+import flying.grub.tamtime.data.UpdateRunnable;
 import flying.grub.tamtime.fragment.LineRouteFragment;
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.slidingTab.SlidingTabLayout;
@@ -72,14 +76,26 @@ public class OneLineActivity extends AppCompatActivity {
 
         Log.d(TAG, line.getDisruptEventList() + "");
         if (line.getDisruptEventList().size() > 0) {
-            showInfo("Preturbation en cours sur la ligne...");
+            showInfo(line.getDisruptEventList().get(0).toString());
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onPause(){
         super.onPause();
         if (isFinishing()) overridePendingTransition(R.anim.fade_scale_in, R.anim.slide_to_right);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     public void showInfo(String text) {
@@ -115,6 +131,15 @@ public class OneLineActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             return LineRouteFragment.newInstance(linePosition, position);
+        }
+    }
+
+    public void onEvent(MessageEvent event) {
+        if (event.type == MessageEvent.Type.EVENT_UPDATE) {
+            Log.d(TAG, line.getDisruptEventList() + "");
+            if (line.getDisruptEventList().size() > 0) {
+                showInfo(line.getDisruptEventList().get(0).toString());
+            }
         }
     }
 }

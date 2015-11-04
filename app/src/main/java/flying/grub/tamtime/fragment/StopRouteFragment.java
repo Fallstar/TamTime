@@ -268,7 +268,7 @@ public class StopRouteFragment extends Fragment {
     }
 
     public void onEvent(MessageEvent event){
-        if (event.type == MessageEvent.Type.TIMESUPDATE) {
+        if (event.type == MessageEvent.Type.TIMES_UPDATE) {
             getActivity().invalidateOptionsMenu();
             refreshLayout.setRefreshing(false);
             stop = DataParser.getDataParser().getStopByOurId(getArguments().getInt("stopId"));
