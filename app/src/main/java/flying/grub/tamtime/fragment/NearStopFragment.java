@@ -246,14 +246,14 @@ public class NearStopFragment extends Fragment {
         protected String doInBackground(Location... locations) {
             for (Location location : locations) {
                 Log.d(TAG, "Asked for distance calc");
-                DataParser.getDataParser().setAlldistance(location);
+                DataParser.getDataParser().getMap().setAlldistance(location);
             }
             return "";
         }
 
         @Override
         protected void onPostExecute(String message) {
-            nearStops = DataParser.getDataParser().getAllNearStops();
+            nearStops = DataParser.getDataParser().getMap().getAllNearStops();
             setupAdapter();
         }
     }

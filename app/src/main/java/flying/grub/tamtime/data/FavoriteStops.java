@@ -31,7 +31,7 @@ public class FavoriteStops {
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         favoriteStop = new ArrayList<>();
         for (String stopId : defaultSharedPreferences.getStringSet(TAG, new HashSet<String>())) {
-            favoriteStop.add(DataParser.getDataParser().getStopByOurId(Integer.parseInt(stopId)));
+            favoriteStop.add(DataParser.getDataParser().getMap().getStopByOurId(Integer.parseInt(stopId)));
         }
         sort();
     }

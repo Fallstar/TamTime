@@ -44,7 +44,7 @@ public class OneLineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slidingtabs);
-        DataParser.getDataParser().update(getBaseContext());
+        DataParser.getDataParser().update();
 
         Bundle bundle = getIntent().getExtras();
         linePosition = bundle.getInt("id");
@@ -62,7 +62,7 @@ public class OneLineActivity extends AppCompatActivity {
             }
         });
 
-        line = DataParser.getDataParser().getLine(linePosition);
+        line = DataParser.getDataParser().getMap().getLine(linePosition);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 

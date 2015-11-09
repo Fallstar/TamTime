@@ -55,7 +55,7 @@ public class AllStopReportFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setBackgroundColor(getResources().getColor(R.color.windowBackgroundCard));
 
-        stops = DataParser.getDataParser().getAllReportStop();
+        stops = DataParser.getDataParser().getMap().getAllReportStop();
         getActivity().setTitle(getString(R.string.reports));
 
         if (stops.size() == 0) {

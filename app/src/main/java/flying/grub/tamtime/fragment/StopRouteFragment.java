@@ -78,7 +78,7 @@ public class StopRouteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        stop = DataParser.getDataParser().getStopByOurId(getArguments().getInt("stopId"));
+        stop = DataParser.getDataParser().getMap().getStopByOurId(getArguments().getInt("stopId"));
         line = stop.getLines().get(getArguments().getInt("linePosition"));
     }
 
@@ -86,7 +86,7 @@ public class StopRouteFragment extends Fragment {
     public void onResume(){
         super.onResume();
         EventBus.getDefault().register(this);
-        updateRunnable = new UpdateRunnable(getContext());
+        updateRunnable = new UpdateRunnable();
         updateRunnable.run();
     }
 
@@ -160,7 +160,7 @@ public class StopRouteFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                DataParser.getDataParser().update(getActivity());
+                DataParser.getDataParser().update();
             }
         });
         refreshLayout.setColorSchemeResources(R.color.primaryColor);
@@ -197,8 +197,8 @@ public class StopRouteFragment extends Fragment {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        DataParser.getDataParser().sendReport(getActivity(), new Report(stop, ReportType.reportFromPosition(position), message));
-                        DataParser.getDataParser().update(getActivity());
+                        DataParser.getDataParser().getReportEvent().sendReport(getActivity(), new Report(stop, ReportType.reportFromPosition(position), message));
+                        DataParser.getDataParser().update();
                         dialog.dismiss();
                     }
                 }).build();
@@ -216,7 +216,7 @@ public class StopRouteFragment extends Fragment {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Report r = stop.getReports().get(position);
-                        DataParser.getDataParser().confirmReport(getContext(), r.getReportId());
+                        DataParser.getDataParser().getReportEvent().confirmReport(getContext(), r.getReportId());
                         dialog.dismiss();
                     }
                 }).build();
@@ -271,11 +271,11 @@ public class StopRouteFragment extends Fragment {
         if (event.type == MessageEvent.Type.TIMES_UPDATE) {
             getActivity().invalidateOptionsMenu();
             refreshLayout.setRefreshing(false);
-            stop = DataParser.getDataParser().getStopByOurId(getArguments().getInt("stopId"));
+            stop = DataParser.getDataParser().getMap().getStopByOurId(getArguments().getInt("stopId"));
             line = stop.getLines().get(getArguments().getInt("linePosition"));
 
             adapter = new OneStopAdapter(stop.getStopTimeForLine(line.getLineId()));
-            recyclerView.swapAdapter(adapter, false);
+            recyclerView.swapAdapter(adapter, true);
         }
     }
 }

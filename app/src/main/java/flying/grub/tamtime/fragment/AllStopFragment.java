@@ -66,7 +66,7 @@ public class AllStopFragment extends Fragment {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity());
         recyclerView.addItemDecoration(itemDecoration);
 
-        currentDisplayedStop = DataParser.getDataParser().getStopList();
+        currentDisplayedStop = DataParser.getDataParser().getMap().getStopList();
         adapter = new AllStopAdapter(currentDisplayedStop);
         recyclerView.setAdapter(adapter);
         adapter.SetOnItemClickListener(new AllStopAdapter.OnItemClickListener() {
@@ -138,7 +138,7 @@ public class AllStopFragment extends Fragment {
     private class SearchAsync extends AsyncTask<String, String, ArrayList<Stop>> {
         protected ArrayList<Stop> doInBackground(String... strings) {
             String s = strings[0];
-            return DataParser.getDataParser().searchInStops(s);
+            return DataParser.getDataParser().getMap().searchInStops(s);
         }
 
         protected void onPostExecute(ArrayList<Stop> stops) {

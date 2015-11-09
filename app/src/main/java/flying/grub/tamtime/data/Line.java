@@ -34,6 +34,15 @@ public class Line {
         return this.routesList;
     }
 
+    public Route getRoutebyName(String s) {
+        for(Route route : routesList) {
+            if (route.getDirection().toLowerCase().contains(s.toLowerCase())) {
+                return route;
+            }
+        }
+        return null;
+    }
+
     public int getRouteCount(){
         return this.routesList.size();
     }

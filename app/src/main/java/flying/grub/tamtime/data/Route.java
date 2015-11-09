@@ -49,6 +49,15 @@ public class Route {
         return null;
     }
 
+    public StopTimes getStopTimesById(int id) {
+        for(StopTimes stopTimes : stpTimes) {
+            if (stopTimes.getStopId() == id) {
+                return stopTimes;
+            }
+        }
+        return null;
+    }
+
     public ArrayList<StopTimes> getStpTimes() {
         return this.stpTimes;
     }

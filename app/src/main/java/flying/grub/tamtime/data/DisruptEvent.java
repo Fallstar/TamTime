@@ -3,15 +3,13 @@ package flying.grub.tamtime.data;
 import java.util.Calendar;
 
 public class DisruptEvent {
-    private DataParser data;
     private Line line;
     private Calendar beginDate;
     private Calendar endDate;
     private String title;
 
-    public DisruptEvent(DataParser data, Line line, Calendar begD, Calendar endD, String title) {
-        this.data = data;
-        this.data.addDisruptEvent(this);
+    public DisruptEvent(Line line, Calendar begD, Calendar endD, String title) {
+        DataParser.getDataParser().getDisruptEventHandler().addDisruptEvent(this);
         this.line = line;
         this.line.addDisruptEvent(this);
         this.beginDate = begD;
@@ -27,7 +25,7 @@ public class DisruptEvent {
 
     public void destroy() {
         this.line.removeDisruptEvent(this);
-        this.data.removeDisruptEvent(this);
+        DataParser.getDataParser().getDisruptEventHandler().removeDisruptEvent(this);
     }
 
     // Tests & Bullshit

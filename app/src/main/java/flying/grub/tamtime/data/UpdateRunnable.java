@@ -9,18 +9,13 @@ import android.os.Handler;
  */
 public class UpdateRunnable implements Runnable {
 
-    private Context context;
     private Handler handler = new Handler();
 
     private static final int TIME = 30000; // 30 sec
 
-    public UpdateRunnable(Context context) {
-        this.context = context;
-    }
-
     @Override
     public void run() {
-        DataParser.getDataParser().update(context);
+        DataParser.getDataParser().update();
         handler.postDelayed(this, TIME);
     }
 

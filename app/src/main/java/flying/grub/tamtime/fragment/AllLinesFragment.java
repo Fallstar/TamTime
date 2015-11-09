@@ -62,7 +62,7 @@ public class AllLinesFragment extends Fragment {
         recyclerView.addItemDecoration(itemDecoration);
         // specify an adapter (see also next example)
 
-        lines = DataParser.getDataParser().getLinesList();
+        lines = DataParser.getDataParser().getMap().getLinesList();
         adapter = new AllLinesAdapter(lines);
         recyclerView.setAdapter(adapter);
         adapter.SetOnItemClickListener(new AllLinesAdapter.OnItemClickListener() {
@@ -111,7 +111,7 @@ public class AllLinesFragment extends Fragment {
     }
 
     public void createAskDialog() {
-        if (DataParser.getDataParser().needTheoUpdate(getActivity().getBaseContext())) {
+        if (DataParser.getDataParser().getTheoricTimes().needTheoUpdate(getActivity().getBaseContext())) {
             MaterialDialog dialog = new MaterialDialog.Builder(getActivity()).title(R.string.ask_download_title)
                     .content(R.string.ask_download_content)
                     .negativeText(R.string.no)
@@ -119,7 +119,7 @@ public class AllLinesFragment extends Fragment {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            DataParser.getDataParser().downloadAllTheo(getActivity());
+                            DataParser.getDataParser().getTheoricTimes().downloadAllTheo(getActivity());
                             dialog.dismiss();
                         }
                     }).build();
@@ -129,7 +129,7 @@ public class AllLinesFragment extends Fragment {
 
     public void onEvent(MessageEvent event){
         if (event.type == MessageEvent.Type.LINES_UPDATE) {
-            lines = DataParser.getDataParser().getLinesList();
+            lines = DataParser.getDataParser().getMap().getLinesList();
             recyclerView.swapAdapter(new AllLinesAdapter(lines), false);
         }
     }

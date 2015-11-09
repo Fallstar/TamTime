@@ -35,11 +35,11 @@ public class OneStopActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slidingtabs);
-        DataParser.getDataParser().update(getBaseContext());
+        DataParser.getDataParser().update();
 
         Bundle bundle = getIntent().getExtras();
         stopId = bundle.getInt("stopId");
-        stop = DataParser.getDataParser().getStopByOurId(stopId);
+        stop = DataParser.getDataParser().getMap().getStopByOurId(stopId);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);

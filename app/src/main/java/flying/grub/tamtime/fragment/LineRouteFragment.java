@@ -91,7 +91,7 @@ public class LineRouteFragment extends Fragment {
     public void onResume(){
         super.onResume();
         EventBus.getDefault().register(this);
-        updateRunnable = new UpdateRunnable(getContext());
+        updateRunnable = new UpdateRunnable();
         updateRunnable.run();
     }
 
@@ -126,7 +126,7 @@ public class LineRouteFragment extends Fragment {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity());
         recyclerView.addItemDecoration(itemDecoration);
 
-        route = DataParser.getDataParser().getLine(linePosition).getRoutes().get(routePosition);
+        route = DataParser.getDataParser().getMap().getLine(linePosition).getRoutes().get(routePosition);
 
         adapter = new OneRouteAdapter(route.getStpTimes(), getContext(), isTheoritical);
 
@@ -140,9 +140,9 @@ public class LineRouteFragment extends Fragment {
         });
 
         if (isTheoritical) {
-            getActivity().setTitle("Thèorique : Ligne " + DataParser.getDataParser().getLine(linePosition).getLineId());
+            getActivity().setTitle("Thèorique : Ligne " + DataParser.getDataParser().getMap().getLine(linePosition).getLineId());
         } else {
-            getActivity().setTitle("Ligne " + DataParser.getDataParser().getLine(linePosition).getLineId());
+            getActivity().setTitle("Ligne " + DataParser.getDataParser().getMap().getLine(linePosition).getLineId());
         }
 
         circularIndeterminate.setVisibility(View.GONE);
@@ -150,8 +150,7 @@ public class LineRouteFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                DataParser.getDataParser().setupRealTimes(getActivity());
-                DataParser.getDataParser().setupReport(getActivity());
+                DataParser.getDataParser().update();
             }
         });
         refreshLayout.setColorSchemeResources(R.color.primaryColor);
@@ -199,7 +198,7 @@ public class LineRouteFragment extends Fragment {
     public void onEvent(MessageEvent event){
         if (event.type == MessageEvent.Type.TIMES_UPDATE) {
             getActivity().invalidateOptionsMenu();
-            route = DataParser.getDataParser().getLine(linePosition).getRoutes().get(routePosition);
+            route = DataParser.getDataParser().getMap().getLine(linePosition).getRoutes().get(routePosition);
             adapter = new OneRouteAdapter(route.getStpTimes(), getContext(), isTheoritical);
             adapter.SetOnItemClickListener(new OneRouteAdapter.OnItemClickListener() {
                 @Override
