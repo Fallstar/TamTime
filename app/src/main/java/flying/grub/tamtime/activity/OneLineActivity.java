@@ -2,7 +2,7 @@ package flying.grub.tamtime.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -14,13 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
 import de.greenrobot.event.EventBus;
-import flying.grub.tamtime.adapter.OneRouteAdapter;
 import flying.grub.tamtime.data.DataParser;
 import flying.grub.tamtime.data.Line;
 import flying.grub.tamtime.data.MessageEvent;
@@ -40,11 +37,12 @@ public class OneLineActivity extends AppCompatActivity {
     private int linePosition;
     private Line line;
 
+    private UpdateRunnable updateRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slidingtabs);
-        DataParser.getDataParser().update();
 
         Bundle bundle = getIntent().getExtras();
         linePosition = bundle.getInt("id");
@@ -84,18 +82,38 @@ public class OneLineActivity extends AppCompatActivity {
     public void onResume(){
         super.onResume();
         EventBus.getDefault().register(this);
+        updateRunnable = new UpdateRunnable();
+        updateRunnable.run();
     }
 
     @Override
     public void onPause(){
         super.onPause();
+        updateRunnable.stop();
+        EventBus.getDefault().unregister(this);
         if (isFinishing()) overridePendingTransition(R.anim.fade_scale_in, R.anim.slide_to_right);
     }
 
     @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.line_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.go_theoritical:
+                Intent intent = new Intent(getApplicationContext(), TheoriticalActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("linePosition", linePosition);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void showInfo(String text) {
@@ -136,7 +154,6 @@ public class OneLineActivity extends AppCompatActivity {
 
     public void onEvent(MessageEvent event) {
         if (event.type == MessageEvent.Type.EVENT_UPDATE) {
-            Log.d(TAG, line.getDisruptEventList() + "");
             if (line.getDisruptEventList().size() > 0) {
                 showInfo(line.getDisruptEventList().get(0).toString());
             }

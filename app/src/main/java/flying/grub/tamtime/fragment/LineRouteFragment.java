@@ -51,8 +51,6 @@ public class LineRouteFragment extends Fragment {
 
     private boolean isTheoritical;
 
-    private UpdateRunnable updateRunnable;
-
     private static final String TAG = LineRouteFragment.class.getSimpleName();
 
     public static Fragment newInstance(int linePosition, int routePosition) {
@@ -91,14 +89,6 @@ public class LineRouteFragment extends Fragment {
     public void onResume(){
         super.onResume();
         EventBus.getDefault().register(this);
-        updateRunnable = new UpdateRunnable();
-        updateRunnable.run();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        updateRunnable.stop();
     }
 
     @Override
@@ -156,34 +146,7 @@ public class LineRouteFragment extends Fragment {
         refreshLayout.setColorSchemeResources(R.color.primaryColor);
 
         setHasOptionsMenu(true);
-
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (!isTheoritical) {
-            inflater.inflate(R.menu.line_menu, menu);
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.go_theoritical:
-                if (!isTheoritical) {
-                    Intent intent = new Intent(getActivity(), TheoriticalActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("linePosition", linePosition);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     public void selectitem(int i){

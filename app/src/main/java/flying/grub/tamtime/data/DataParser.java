@@ -1,6 +1,7 @@
 package flying.grub.tamtime.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import flying.grub.tamtime.data.datahandler.DisruptEventHandler;
 import flying.grub.tamtime.data.datahandler.RealTimes;
@@ -42,6 +43,7 @@ public class DataParser {
     }
 
     public void update() {
+        Log.d(TAG, "UPDATE");
         realTimes.update();
         reportEvent.update();
         disruptEventHandler.update();

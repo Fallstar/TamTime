@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,7 +59,7 @@ public class DisruptEventHandler implements DataHandler {
 
                     @Override
                     public void onResponse(final JSONObject response) {
-                        backgroundTask.execute((Runnable) response);
+                        new BackgroundTask().execute(response);
                     }
                 }, new Response.ErrorListener() {
 
@@ -123,9 +124,6 @@ public class DisruptEventHandler implements DataHandler {
 // a string.
     private String downloadUrl(String myurl) throws IOException {
         InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 500;
 
         try {
             URL url = new URL(myurl);
@@ -137,11 +135,11 @@ public class DisruptEventHandler implements DataHandler {
             // Starts the query
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d(TAG, "The response is: " + response);
+            //Log.d(TAG, "The response is: " + response);
             is = conn.getInputStream();
 
             // Convert the InputStream into a string
-            String contentAsString = readIt(is, len);
+            String contentAsString = readIt(is);
             return contentAsString;
 
             // Makes sure that the InputStream is closed after the app is
@@ -154,12 +152,14 @@ public class DisruptEventHandler implements DataHandler {
     }
 
     // Reads an InputStream and converts it to a String.
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer);
+    public String readIt(InputStream stream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder str = new StringBuilder();
+        String line = null;
+        while((line = reader.readLine()) != null) {
+            str.append(line);
+        }
+        return str.toString();
     }
 
     public void addDisruptEvent(DisruptEvent event) {
@@ -170,7 +170,7 @@ public class DisruptEventHandler implements DataHandler {
         this.disruptList.remove(event);
     }
 
-    class backgroundTask extends AsyncTask<JSONObject, Void, Void> {
+    class BackgroundTask extends AsyncTask<JSONObject, Void, Void> {
 
         protected Void doInBackground(JSONObject... res) {
             try {
@@ -186,7 +186,9 @@ public class DisruptEventHandler implements DataHandler {
             return null;
         }
 
-        protected void onPostExecute() {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.EVENT_UPDATE));
         }
     }

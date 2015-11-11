@@ -1,20 +1,36 @@
 package flying.grub.tamtime.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import de.greenrobot.event.EventBus;
 import flying.grub.tamtime.R;
+import flying.grub.tamtime.adapter.DividerItemDecoration;
+import flying.grub.tamtime.adapter.OneStopAdapter;
+import flying.grub.tamtime.adapter.ReportAdapter;
 import flying.grub.tamtime.data.DataParser;
 import flying.grub.tamtime.data.FavoriteStops;
+import flying.grub.tamtime.data.MessageEvent;
+import flying.grub.tamtime.data.Report;
+import flying.grub.tamtime.data.ReportType;
 import flying.grub.tamtime.data.Stop;
+import flying.grub.tamtime.data.UpdateRunnable;
 import flying.grub.tamtime.fragment.StopRouteFragment;
 import flying.grub.tamtime.slidingTab.SlidingTabLayout;
 
@@ -31,11 +47,12 @@ public class OneStopActivity extends AppCompatActivity {
     private int stopId;
     private Stop stop;
 
+    private UpdateRunnable updateRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slidingtabs);
-        DataParser.getDataParser().update();
 
         Bundle bundle = getIntent().getExtras();
         stopId = bundle.getInt("stopId");
@@ -55,8 +72,6 @@ public class OneStopActivity extends AppCompatActivity {
             }
         });
 
-
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 
         viewPager.setAdapter(new OneStopPageAdapter(getSupportFragmentManager()));
@@ -68,12 +83,22 @@ public class OneStopActivity extends AppCompatActivity {
         slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.textClearColor));
         slidingTabLayout.setDividerColors(getResources().getColor(R.color.primaryColor));
         slidingTabLayout.setViewPager(viewPager);
+    }
 
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        EventBus.getDefault().register(this);
+        updateRunnable = new UpdateRunnable();
+        updateRunnable.run();
     }
 
     @Override
     public void onPause(){
         super.onPause();
+        EventBus.getDefault().unregister(this);
+        updateRunnable.stop();
         if (isFinishing()) overridePendingTransition(R.anim.fade_scale_in, R.anim.slide_to_right);
     }
 
@@ -85,6 +110,9 @@ public class OneStopActivity extends AppCompatActivity {
             item.setIcon(R.drawable.ic_star_white_24dp);
         } else {
             item.setIcon(R.drawable.ic_star_border_white_24dp);
+        }
+        if (stop.getReports().size() > 0) {
+            getMenuInflater().inflate(R.menu.alert_report_item, menu);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -101,8 +129,120 @@ public class OneStopActivity extends AppCompatActivity {
                     item.setIcon(R.drawable.ic_star_white_24dp);
                 }
                 return true;
+            case R.id.report:
+                createReportDialog();
+                return true;
+            case R.id.report_warn:
+                createAllReportDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    private void createReportDialog() {
+        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+                .title(R.string.choose_report_category)
+                .items(R.array.report_types)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        if (ReportType.reportFromPosition(which) == ReportType.AUTRE) {
+                            createInputDialog();
+                            return;
+                        }
+                        createConfimationDialog(which, null);
+                        dialog.dismiss();
+                    }
+                })
+                .build();
+        dialog.show();
+    }
+
+    private void createConfimationDialog(final int position, final String message) {
+        String content = String.format(getString(R.string.create_confirm_report), getResources().getStringArray(R.array.report_types)[position], stop.getName());
+        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+                .title(R.string.confirm_report_title)
+                .content(content)
+                .negativeText(R.string.no)
+                .positiveText(R.string.yes)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        DataParser.getDataParser().getReportEvent().sendReport(getBaseContext(), new Report(stop, ReportType.reportFromPosition(position), message));
+                        DataParser.getDataParser().update();
+                        dialog.dismiss();
+                    }
+                }).build();
+        dialog.show();
+    }
+
+    private void confirmConfirmationDialog(final int position) {
+        String content = String.format(getString(R.string.confirm_confirm_report), getResources().getStringArray(R.array.report_types)[stop.getReports().get(position).getType().getValueForString()], stop.getName());
+        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+                .title(R.string.confirm_report_title)
+                .content(content)
+                .negativeText(R.string.no)
+                .positiveText(R.string.yes)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Report r = stop.getReports().get(position);
+                        DataParser.getDataParser().getReportEvent().confirmReport(getBaseContext(), r.getReportId());
+                        dialog.dismiss();
+                    }
+                }).build();
+        dialog.show();
+    }
+
+    private void createInputDialog() {
+        new MaterialDialog.Builder(getBaseContext())
+                .title(R.string.input_report)
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input(R.string.none, R.string.none, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        createConfimationDialog(ReportType.AUTRE.getValueForString(), input.toString());
+                    }
+                }).show();
+    }
+
+    private void createAllReportDialog() {
+        String title = getBaseContext().getResources().getQuantityString(R.plurals.report, stop.getReports().size());
+        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+                .title(title)
+                .customView(R.layout.view_recycler, false)
+                .positiveText(R.string.OK)
+                .build();
+
+        View view = dialog.getCustomView();
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+
+        recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getBaseContext());
+        recyclerView.addItemDecoration(itemDecoration);
+
+        ReportAdapter adapter = new ReportAdapter(stop.getReports(), getBaseContext());
+        recyclerView.setAdapter(adapter);
+        adapter.SetOnItemClickListener(new ReportAdapter.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(View v, int position) {
+                confirmConfirmationDialog(position);
+            }
+        });
+        dialog.show();
+    }
+
+    public void onEvent(MessageEvent event){
+        if (event.type == MessageEvent.Type.REPORT_UPDATE) {
+            invalidateOptionsMenu();
         }
     }
 

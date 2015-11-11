@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements DrawerCallback {
 
         DataParser dataParser = DataParser.getDataParser();
         dataParser.init(this);
+        dataParser.update();
 
 
         navigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);

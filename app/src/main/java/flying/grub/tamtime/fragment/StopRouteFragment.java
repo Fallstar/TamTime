@@ -58,8 +58,6 @@ public class StopRouteFragment extends Fragment {
     private Stop stop;
     private Line line;
 
-    private UpdateRunnable updateRunnable;
-
     public static Fragment newInstance(Integer stopId, int linePosition) {
         StopRouteFragment f = new StopRouteFragment();
 
@@ -77,7 +75,6 @@ public class StopRouteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         stop = DataParser.getDataParser().getMap().getStopByOurId(getArguments().getInt("stopId"));
         line = stop.getLines().get(getArguments().getInt("linePosition"));
     }
@@ -86,42 +83,12 @@ public class StopRouteFragment extends Fragment {
     public void onResume(){
         super.onResume();
         EventBus.getDefault().register(this);
-        updateRunnable = new UpdateRunnable();
-        updateRunnable.run();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        updateRunnable.stop();
     }
 
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (stop.getReports().size() > 0) {
-            inflater.inflate(R.menu.alert_report_item, menu);
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.report:
-                createReportDialog();
-                return true;
-            case R.id.report_warn:
-                createAllReportDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     /**
@@ -168,108 +135,9 @@ public class StopRouteFragment extends Fragment {
         return view;
     }
 
-    private void createReportDialog() {
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.choose_report_category)
-                .items(R.array.report_types)
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        if (ReportType.reportFromPosition(which) == ReportType.AUTRE) {
-                            createInputDialog();
-                            return;
-                        }
-                        createConfimationDialog(which, null);
-                        dialog.dismiss();
-                    }
-                })
-                .build();
-        dialog.show();
-    }
-
-    private void createConfimationDialog(final int position, final String message) {
-        String content = String.format(getString(R.string.create_confirm_report), getResources().getStringArray(R.array.report_types)[position], line.getLineId());
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.confirm_report_title)
-                .content(content)
-                .negativeText(R.string.no)
-                .positiveText(R.string.yes)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        DataParser.getDataParser().getReportEvent().sendReport(getActivity(), new Report(stop, ReportType.reportFromPosition(position), message));
-                        DataParser.getDataParser().update();
-                        dialog.dismiss();
-                    }
-                }).build();
-        dialog.show();
-    }
-
-    private void confirmConfirmationDialog(final int position) {
-        String content = String.format(getString(R.string.confirm_confirm_report), getResources().getStringArray(R.array.report_types)[stop.getReports().get(position).getType().getValueForString()], line.getLineId());
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.confirm_report_title)
-                .content(content)
-                .negativeText(R.string.no)
-                .positiveText(R.string.yes)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Report r = stop.getReports().get(position);
-                        DataParser.getDataParser().getReportEvent().confirmReport(getContext(), r.getReportId());
-                        dialog.dismiss();
-                    }
-                }).build();
-        dialog.show();
-    }
-
-    private void createInputDialog() {
-        new MaterialDialog.Builder(getActivity())
-                .title(R.string.input_report)
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .input(R.string.none, R.string.none, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        createConfimationDialog(ReportType.AUTRE.getValueForString(), input.toString());
-                    }
-                }).show();
-    }
-
-    private void createAllReportDialog() {
-        String title = getActivity().getResources().getQuantityString(R.plurals.report, stop.getReports().size());
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title(title)
-                .customView(R.layout.view_recycler, false)
-                .positiveText(R.string.OK)
-                .build();
-
-        View view = dialog.getCustomView();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
-        recyclerView.setHasFixedSize(true);
-
-        LinearLayoutManager layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity());
-        recyclerView.addItemDecoration(itemDecoration);
-
-        ReportAdapter adapter = new ReportAdapter(stop.getReports(), getActivity());
-        recyclerView.setAdapter(adapter);
-        adapter.SetOnItemClickListener(new ReportAdapter.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(View v, int position) {
-                confirmConfirmationDialog(position);
-            }
-        });
-        dialog.show();
-    }
-
     public void onEvent(MessageEvent event){
         if (event.type == MessageEvent.Type.TIMES_UPDATE) {
-            getActivity().invalidateOptionsMenu();
+
             refreshLayout.setRefreshing(false);
             stop = DataParser.getDataParser().getMap().getStopByOurId(getArguments().getInt("stopId"));
             line = stop.getLines().get(getArguments().getInt("linePosition"));
