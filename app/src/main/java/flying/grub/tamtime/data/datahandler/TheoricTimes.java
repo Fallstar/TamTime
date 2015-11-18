@@ -34,20 +34,20 @@ public class TheoricTimes implements DataHandler {
         this.context = context;
     }
 
-    public void downloadAllTheo(Context context) {
+    public void downloadAllTheo() {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", JSON_THEOTIME);
         context.startService(intent);
     }
 
-    public boolean asTheo(Context context) {
+    public boolean asTheo() {
         File file = context.getFileStreamPath("theo.json");
         return file.isFile();
     }
 
-    public boolean needTheoUpdate(Context context) {
-        Log.d(TAG, asTheo(context) + "");
-        return !asTheo(context); //TO DO (MD5)
+    public boolean needTheoUpdate() {
+        Log.d(TAG, asTheo() + "");
+        return !asTheo(); //TO DO (MD5)
     }
 
     @Override

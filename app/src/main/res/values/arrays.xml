@@ -32,4 +32,10 @@
         <item>Utilisez l\'application. Partagez la. Profitez de la vie et des minutes qu\'elle vous fait gagner !\nVous pouvez aussi nous remercier en nous payant une bière via le bouton de don ! Enfin, vos retours comptent énormément pour nous. N\'hésitez pas à noter cette application et nous envoyer vos remarques.</item>
         <item>Cette application est un logiciel libre sous license GPLv2 et est disponnible sur GitHub. Si vous comprenez cette phrase, n\'hésitez pas à participer au développement !</item>
     </string-array>
+
+    <string-array name="the_cert">
+        <item>faible</item>
+        <item>moyenne</item>
+        <item>forte</item>
+    </string-array>
 </resources>

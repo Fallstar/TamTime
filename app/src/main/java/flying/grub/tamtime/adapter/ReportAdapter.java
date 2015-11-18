@@ -2,6 +2,7 @@ package flying.grub.tamtime.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import flying.grub.tamtime.data.ReportType;
 public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     public OnItemClickListener itemClickListener;
+
+    public static final String TAG = ReportAdapter.class.getSimpleName();
 
     private static final int TYPE_EXTENDED = 0;
     private static final int TYPE_NORMAL = 1;
@@ -55,7 +58,7 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         ViewHolderNormal hold = (ViewHolderNormal) holder;
         hold.title.setText(context.getResources().getStringArray(R.array.report_types)[report.getType().getValueForString()]);
         hold.time.setText(String.format(context.getString(R.string.ago), report.getTime()));
-        String the_cert = context.getResources().getQuantityString(R.plurals.the_cert, report.getConfirm());
+        String the_cert = context.getResources().getStringArray(R.array.the_cert)[report.getConfirm()];
         String certainty = String.format(context.getString(R.string.certainty), the_cert);
         hold.certainty.setText(certainty);
 

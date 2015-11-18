@@ -99,9 +99,6 @@ public class AllLinesFragment extends Fragment {
     }
 
     public void selectitem(int i){
-        if (i > 19) {
-            createAskDialog();
-        }
         Intent intent = new Intent(getActivity(), OneLineActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("id", i);
@@ -110,22 +107,7 @@ public class AllLinesFragment extends Fragment {
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
     }
 
-    public void createAskDialog() {
-        if (DataParser.getDataParser().getTheoricTimes().needTheoUpdate(getActivity().getBaseContext())) {
-            MaterialDialog dialog = new MaterialDialog.Builder(getActivity()).title(R.string.ask_download_title)
-                    .content(R.string.ask_download_content)
-                    .negativeText(R.string.no)
-                    .positiveText(R.string.yes)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            DataParser.getDataParser().getTheoricTimes().downloadAllTheo(getActivity());
-                            dialog.dismiss();
-                        }
-                    }).build();
-            dialog.show();
-        }
-    }
+
 
     public void onEvent(MessageEvent event){
         if (event.type == MessageEvent.Type.LINES_UPDATE) {

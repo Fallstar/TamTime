@@ -65,7 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
             findPreference("reload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    DataParser.getDataParser().getTheoricTimes().downloadAllTheo(getActivity());
+                    DataParser.getDataParser().getTheoricTimes().downloadAllTheo();
                     return true;
                 }
             });

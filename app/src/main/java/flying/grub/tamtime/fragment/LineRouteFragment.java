@@ -130,7 +130,7 @@ public class LineRouteFragment extends Fragment {
         });
 
         if (isTheoritical) {
-            getActivity().setTitle("Thèorique : Ligne " + DataParser.getDataParser().getMap().getLine(linePosition).getLineId());
+            getActivity().setTitle("Théorique : Ligne " + DataParser.getDataParser().getMap().getLine(linePosition).getLineId());
         } else {
             getActivity().setTitle("Ligne " + DataParser.getDataParser().getMap().getLine(linePosition).getLineId());
         }

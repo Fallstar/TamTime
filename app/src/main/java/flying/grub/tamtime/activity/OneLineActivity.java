@@ -3,6 +3,7 @@ package flying.grub.tamtime.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -14,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
@@ -76,6 +79,9 @@ public class OneLineActivity extends AppCompatActivity {
         if (line.getDisruptEventList().size() > 0) {
             showInfo(line.getDisruptEventList().get(0).toString());
         }
+        if (linePosition > 19) {
+            createAskDialog();
+        }
     }
 
     @Override
@@ -129,6 +135,23 @@ public class OneLineActivity extends AppCompatActivity {
                 })
                 .actionColor(getResources().getColor(R.color.accentColor))
                 .show(this);
+    }
+
+    public void createAskDialog() {
+        if (DataParser.getDataParser().getTheoricTimes().needTheoUpdate()) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this).title(R.string.ask_download_title)
+                    .content(R.string.ask_download_content)
+                    .negativeText(R.string.no)
+                    .positiveText(R.string.OK)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            DataParser.getDataParser().getTheoricTimes().downloadAllTheo();
+                            dialog.dismiss();
+                        }
+                    }).build();
+            dialog.show();
+        }
     }
 
     public class OneLinePageAdapter extends FragmentStatePagerAdapter {

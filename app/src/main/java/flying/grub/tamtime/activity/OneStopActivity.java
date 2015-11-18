@@ -130,7 +130,7 @@ public class OneStopActivity extends AppCompatActivity {
                 }
                 return true;
             case R.id.report:
-                createReportDialog();
+                choiceReportDialog();
                 return true;
             case R.id.report_warn:
                 createAllReportDialog();
@@ -141,7 +141,7 @@ public class OneStopActivity extends AppCompatActivity {
     }
 
 
-    private void createReportDialog() {
+    private void choiceReportDialog() {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.choose_report_category)
                 .items(R.array.report_types)
@@ -152,7 +152,7 @@ public class OneStopActivity extends AppCompatActivity {
                             createInputDialog();
                             return;
                         }
-                        createConfimationDialog(which, null);
+                        createDialog(which, null);
                         dialog.dismiss();
                     }
                 })
@@ -160,8 +160,8 @@ public class OneStopActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void createConfimationDialog(final int position, final String message) {
-        String content = String.format(getString(R.string.create_confirm_report), getResources().getStringArray(R.array.report_types)[position], stop.getName());
+    private void createDialog(final int position, final String message) {
+        String content = String.format(getString(R.string.create_report), getResources().getStringArray(R.array.report_types)[position], stop.getName());
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.confirm_report_title)
                 .content(content)
@@ -178,8 +178,8 @@ public class OneStopActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void confirmConfirmationDialog(final int position) {
-        String content = String.format(getString(R.string.confirm_confirm_report), getResources().getStringArray(R.array.report_types)[stop.getReports().get(position).getType().getValueForString()], stop.getName());
+    private void confirmDialog(final int position) {
+        String content = String.format(getString(R.string.confirm_report), getResources().getStringArray(R.array.report_types)[stop.getReports().get(position).getType().getValueForString()], stop.getName());
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.confirm_report_title)
                 .content(content)
@@ -203,7 +203,7 @@ public class OneStopActivity extends AppCompatActivity {
                 .input(R.string.none, R.string.none, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
-                        createConfimationDialog(ReportType.AUTRE.getValueForString(), input.toString());
+                        createDialog(ReportType.AUTRE.getValueForString(), input.toString());
                     }
                 }).show();
     }
@@ -234,7 +234,7 @@ public class OneStopActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(View v, int position) {
-                confirmConfirmationDialog(position);
+                confirmDialog(position);
             }
         });
         dialog.show();
