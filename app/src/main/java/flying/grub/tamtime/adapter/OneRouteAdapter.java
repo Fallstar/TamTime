@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import flying.grub.tamtime.activity.OneLineActivity;
 import flying.grub.tamtime.data.Stop;
 import flying.grub.tamtime.activity.MainActivity;
 import flying.grub.tamtime.R;
@@ -25,6 +26,8 @@ import flying.grub.tamtime.data.StopTimes;
  * Created by fly on 10/02/15.
  */
 public class OneRouteAdapter extends RecyclerView.Adapter<OneRouteAdapter.ViewHolder> {
+
+    private static final String TAG = OneRouteAdapter.class.getSimpleName();
     public OnItemClickListener mItemClickListener;
     private ArrayList<StopTimes> stops;
     private boolean isTheoritical;
@@ -71,10 +74,13 @@ public class OneRouteAdapter extends RecyclerView.Adapter<OneRouteAdapter.ViewHo
         holder.tps2.setText(times.get(1));
         holder.tps3.setText(times.get(2));
 
-        if (stops.get(position).getStop().getReports().size() > 0) {
+        if (stop.getStop().getReports().size() > 0) {
+            Log.d(TAG, stop.getStop().getName() + "||" + stop.getStop().getReports().size());
             Drawable draw = context.getResources().getDrawable(R.drawable.ic_warning_black_18dp).getConstantState().newDrawable().mutate();
             draw.setColorFilter(Color.parseColor("#616161"), PorterDuff.Mode.SRC_ATOP);
             holder.icon.setImageDrawable(draw);
+        } else {
+            holder.icon.setImageDrawable(null);
         }
     }
 
