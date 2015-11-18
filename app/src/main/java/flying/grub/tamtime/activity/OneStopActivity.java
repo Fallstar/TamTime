@@ -142,7 +142,7 @@ public class OneStopActivity extends AppCompatActivity {
 
 
     private void createReportDialog() {
-        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.choose_report_category)
                 .items(R.array.report_types)
                 .itemsCallback(new MaterialDialog.ListCallback() {
@@ -162,7 +162,7 @@ public class OneStopActivity extends AppCompatActivity {
 
     private void createConfimationDialog(final int position, final String message) {
         String content = String.format(getString(R.string.create_confirm_report), getResources().getStringArray(R.array.report_types)[position], stop.getName());
-        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.confirm_report_title)
                 .content(content)
                 .negativeText(R.string.no)
@@ -180,7 +180,7 @@ public class OneStopActivity extends AppCompatActivity {
 
     private void confirmConfirmationDialog(final int position) {
         String content = String.format(getString(R.string.confirm_confirm_report), getResources().getStringArray(R.array.report_types)[stop.getReports().get(position).getType().getValueForString()], stop.getName());
-        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.confirm_report_title)
                 .content(content)
                 .negativeText(R.string.no)
@@ -197,7 +197,7 @@ public class OneStopActivity extends AppCompatActivity {
     }
 
     private void createInputDialog() {
-        new MaterialDialog.Builder(getBaseContext())
+        new MaterialDialog.Builder(this)
                 .title(R.string.input_report)
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .input(R.string.none, R.string.none, new MaterialDialog.InputCallback() {
@@ -210,7 +210,7 @@ public class OneStopActivity extends AppCompatActivity {
 
     private void createAllReportDialog() {
         String title = getBaseContext().getResources().getQuantityString(R.plurals.report, stop.getReports().size());
-        MaterialDialog dialog = new MaterialDialog.Builder(getBaseContext())
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(title)
                 .customView(R.layout.view_recycler, false)
                 .positiveText(R.string.OK)
