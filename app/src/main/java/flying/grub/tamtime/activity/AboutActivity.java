@@ -74,7 +74,6 @@ public class AboutActivity extends AppCompatActivity {
             TextView content = (TextView) itemView.findViewById(R.id.content);
             title.setText(titles[position]);
             content.setText(contents[position]);
-
             container.addView(itemView);
 
             return itemView;
