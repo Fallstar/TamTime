@@ -78,7 +78,6 @@ public class AllStopFragment extends Fragment {
         });
 
         return view;
-
     }
 
     @Override
@@ -138,7 +137,7 @@ public class AllStopFragment extends Fragment {
     private class SearchAsync extends AsyncTask<String, String, ArrayList<Stop>> {
         protected ArrayList<Stop> doInBackground(String... strings) {
             String s = strings[0];
-            return DataParser.getDataParser().getMap().searchInStops(s);
+            return DataParser.getDataParser().getMap().searchInStops(s, -1);
         }
 
         protected void onPostExecute(ArrayList<Stop> stops) {

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TamTime</string>
 
+    <string name="home">Acceuil</string>
     <string name="all_infos">Infos</string>
     <string name="all_lines">Lignes</string>
     <string name="all_stops">Arrêts</string>
@@ -8,10 +9,12 @@
     <string name="all_stops_favs">Mes Arrêts</string>
     <string name="nearby_stop">Arrêts Proches</string>
     <string name="maps">La Carte</string>
-    <string name="reports">Les évenements</string>
+    <string name="reports">Les signalements</string>
 
     <string name="one_line">Ligne</string>
     <string name="no_favorite_stop">Pas d\'arrets favoris…</string>
+    
+    <string name="hint_search_welcome">Rechercher un arrêt</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

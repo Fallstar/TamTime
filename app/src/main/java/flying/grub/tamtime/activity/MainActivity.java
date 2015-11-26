@@ -13,6 +13,7 @@ import flying.grub.tamtime.fragment.AllLinesFragment;
 import flying.grub.tamtime.fragment.AllStopFragment;
 import flying.grub.tamtime.fragment.AllStopReportFragment;
 import flying.grub.tamtime.fragment.FavoriteStopsFragment;
+import flying.grub.tamtime.fragment.HomeFragment;
 import flying.grub.tamtime.fragment.NavigationDrawerFragment;
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.fragment.NearStopFragment;
@@ -67,6 +68,12 @@ public class MainActivity extends AppCompatActivity implements DrawerCallback {
         Fragment fragment;
         Intent intent;
         switch (element.getId()) {
+            case 0:
+                fragment = new HomeFragment();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack("");
+                transaction.commit();
+                break;
             case 1:
                 fragment = new AllLinesFragment();
                 transaction.replace(R.id.container, fragment);

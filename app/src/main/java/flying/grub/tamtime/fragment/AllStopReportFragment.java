@@ -75,7 +75,7 @@ public class AllStopReportFragment extends Fragment {
         }
     }
 
-    public void selectitem(int i){
+    public void selectitem(int i) {
         Stop s = stops.get(i);
         Intent intent = new Intent(getActivity(), OneStopActivity.class);
         Bundle bundle = new Bundle();

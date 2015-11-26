@@ -10,6 +10,7 @@ import java.util.Collections;
 public class Stop {
     private int ourId;
     private String name;
+    private String normalisedName;
     private ArrayList<Line> linesList;
 
     private Location location;
@@ -93,6 +94,14 @@ public class Stop {
 
     public void calcDistanceFromUser(Location user) {
         distanceFromUser = user.distanceTo(this.location);
+    }
+
+    public String getNormalisedName() {
+        return normalisedName;
+    }
+
+    public void setNormalisedName(String normalisedName) {
+        this.normalisedName = normalisedName;
     }
 
     public float getDistanceFromUser() {

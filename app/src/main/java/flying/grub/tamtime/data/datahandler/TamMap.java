@@ -165,10 +165,16 @@ public class TamMap implements DataHandler {
         return res;
     }
 
-    public ArrayList<Stop> searchInStops(String search) {
+    public ArrayList<Stop> searchInStops(String search, int number) {
         ArrayList<Stop> res = new ArrayList<>();
         for (Stop s : stopList) {
-            if (normalize(s.getName()).contains(normalize(search))) {
+            if (number != -1 && number == res.size()) {
+                break;
+            }
+            if (s.getNormalisedName() == null) {
+                s.setNormalisedName(normalize(s.getName()));
+            }
+            if (s.getNormalisedName().contains(normalize(search))) {
                 res.add(s);
             }
         }

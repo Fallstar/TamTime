@@ -85,6 +85,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ArrayList<ItemWithDrawable> setItems() {
         drawerElements = new ArrayList<>();
+        drawerElements.add(new ItemWithDrawable(0, getString(R.string.home), getResources().getDrawable(R.drawable.ic_home_black_24dp), false));
         drawerElements.add(new ItemWithDrawable(1, getString(R.string.all_lines), getResources().getDrawable(R.drawable.ic_directions_subway_black_24dp), false));
         drawerElements.add(new ItemWithDrawable(2, getString(R.string.all_stops), getResources().getDrawable(R.drawable.ic_place_black_24dp), false));
         drawerElements.add(new ItemWithDrawable(3, getString(R.string.all_stops_favs), getResources().getDrawable(R.drawable.ic_favorite_black_24dp), false));
