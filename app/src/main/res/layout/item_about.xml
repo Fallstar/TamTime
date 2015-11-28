@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:background="@color/primaryColor"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:padding="20dp">
 
     <TextView
@@ -13,7 +14,6 @@
         android:layout_height="wrap_content"
         android:letterSpacing="0.05"
         android:textStyle="bold"
-        android:layout_marginTop="110dp"
         android:gravity="center"
         android:textSize="24sp"/>
 

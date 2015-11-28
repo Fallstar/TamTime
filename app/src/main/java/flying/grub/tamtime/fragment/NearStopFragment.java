@@ -139,9 +139,11 @@ public class NearStopFragment extends Fragment {
         }
         if (nearStops.size() == 0) {
             textView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
             return;
         } else {
             textView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
         adapter = new NearStopAdapter(nearStops);
         recyclerView.swapAdapter(adapter, true);
