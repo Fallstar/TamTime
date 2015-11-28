@@ -64,7 +64,6 @@ public class FavoriteStopsFragment extends Fragment {
             textView.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
             return view;
-        } else {
         }
 
         adapter = new FavoriteAdapter(favoriteStops.getFavoriteStop());

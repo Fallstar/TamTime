@@ -160,7 +160,6 @@ public class LineRouteFragment extends Fragment {
 
     public void onEvent(MessageEvent event){
         if (event.type == MessageEvent.Type.TIMES_UPDATE) {
-            getActivity().invalidateOptionsMenu();
             route = DataParser.getDataParser().getMap().getLine(linePosition).getRoutes().get(routePosition);
             adapter = new OneRouteAdapter(route.getStpTimes(), getContext(), isTheoritical);
             adapter.SetOnItemClickListener(new OneRouteAdapter.OnItemClickListener() {

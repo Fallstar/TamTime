@@ -96,14 +96,13 @@ public class AllStopFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //new SearchAsync().execute(newText);
+                new SearchAsync().execute(newText);
                 return false;
             }
         });
         changeSearchViewTextColor(sv);
         item.setActionView(sv);
     }
-
 
     private void changeSearchViewTextColor(View view) {
         if (view != null) {
@@ -145,6 +144,4 @@ public class AllStopFragment extends Fragment {
             recyclerView.swapAdapter(new AllStopAdapter(currentDisplayedStop), false);
         }
     }
-
-
 }

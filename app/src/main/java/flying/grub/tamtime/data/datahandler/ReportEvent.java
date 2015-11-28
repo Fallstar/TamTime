@@ -20,8 +20,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.greenrobot.event.EventBus;
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.data.DataParser;
+import flying.grub.tamtime.data.MessageEvent;
 import flying.grub.tamtime.data.Report;
 import flying.grub.tamtime.data.ReportType;
 import flying.grub.tamtime.data.Stop;
@@ -81,6 +83,7 @@ public class ReportEvent implements DataHandler {
                         Integer result = Integer.parseInt(response);
                         Log.d(TAG, "REPONSE:" + response + "|");
                         Toast.makeText(context, context.getResources().getStringArray(R.array.post_status)[result], Toast.LENGTH_SHORT).show();
+                        update();
                     }
                 },
                 new Response.ErrorListener() {
@@ -108,6 +111,7 @@ public class ReportEvent implements DataHandler {
                         Integer result = Integer.parseInt(response);
                         Log.d(TAG, "REPONSE:" + response + "|");
                         Toast.makeText(context, context.getResources().getStringArray(R.array.confirm_status)[result], Toast.LENGTH_SHORT).show();
+                        update();
                     }
                 },
                 new Response.ErrorListener() {
@@ -151,6 +155,8 @@ public class ReportEvent implements DataHandler {
                     this.reportList.add(report);
                 }
             }
+
+            EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.REPORT_UPDATE));
         } catch (JSONException e) {
             e.printStackTrace();
         }
