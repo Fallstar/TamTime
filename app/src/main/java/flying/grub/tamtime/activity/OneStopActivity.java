@@ -19,6 +19,8 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.util.ArrayList;
+
 import de.greenrobot.event.EventBus;
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.adapter.DividerItemDecoration;
@@ -26,6 +28,7 @@ import flying.grub.tamtime.adapter.OneStopAdapter;
 import flying.grub.tamtime.adapter.ReportAdapter;
 import flying.grub.tamtime.data.DataParser;
 import flying.grub.tamtime.data.FavoriteStops;
+import flying.grub.tamtime.data.Line;
 import flying.grub.tamtime.data.MessageEvent;
 import flying.grub.tamtime.data.Report;
 import flying.grub.tamtime.data.ReportType;
@@ -105,6 +108,7 @@ public class OneStopActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.stop_menu, menu);
+        getMenuInflater().inflate(R.menu.add_to_home, menu);
         MenuItem item = menu.findItem(R.id.action_favorite);
         if (favoriteStops.isInFav(stop)) {
             item.setIcon(R.drawable.ic_star_white_24dp);
@@ -134,6 +138,27 @@ public class OneStopActivity extends AppCompatActivity {
                 return true;
             case R.id.report_warn:
                 createAllReportDialog();
+                return true;
+            case R.id.action_add_line_on_home:
+                ArrayList<CharSequence> lines = new ArrayList<>();
+                for (Line l : stop.getLines()) {
+                    lines.add("Ligne " + l.getLineNum());
+                }
+                CharSequence[] lineString = lines.toArray(new CharSequence[lines.size()]);
+
+                MaterialDialog dialog = new MaterialDialog.Builder(OneStopActivity.this)
+                        .title(R.string.line_choice)
+                        .items(lineString)
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                Stop s = stop;
+                                Line l = s.getLines().get(which);
+                                favoriteStops.addLineStop(l, s);
+                                dialog.dismiss();
+                            }
+                        }).build();
+                dialog.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

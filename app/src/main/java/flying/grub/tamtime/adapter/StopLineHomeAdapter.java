@@ -25,6 +25,7 @@ import java.util.Map;
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.activity.OneStopActivity;
 import flying.grub.tamtime.data.Line;
+import flying.grub.tamtime.data.LineStop;
 import flying.grub.tamtime.data.Stop;
 import flying.grub.tamtime.data.StopTimes;
 
@@ -36,11 +37,11 @@ public class StopLineHomeAdapter extends RecyclerView.Adapter<StopLineHomeAdapte
     private static final String TAG = StopLineHomeAdapter.class.getSimpleName();
 
     public OnItemClickListener mItemClickListener;
-    private Map<Stop, List<Line>> stopListMap;
+    private ArrayList<LineStop> favoriteStopLine;
     private FragmentActivity context;
 
-    public StopLineHomeAdapter(Map<Stop, List<Line>> stopLines, FragmentActivity context) {
-        this.stopListMap = stopLines;
+    public StopLineHomeAdapter(ArrayList<LineStop> stopLines, FragmentActivity context) {
+        this.favoriteStopLine = stopLines;
         this.context = context;
     }
 
@@ -64,22 +65,9 @@ public class StopLineHomeAdapter extends RecyclerView.Adapter<StopLineHomeAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        int count = 0;
-        Stop s = null;
-        Line l = null;
-        for (Map.Entry<Stop, List<Line>> entry : stopListMap.entrySet()) {
-            s = entry.getKey();
-            for (Line line : entry.getValue()) {
-                l = line;
-                count ++;
-                if (count == position) {
-                    break;
-                }
-            }
-            if (count == position) {
-                break;
-            }
-        }
+        LineStop lineStop = favoriteStopLine.get(position);
+        Stop s = lineStop.getStop();
+        Line l = lineStop.getLine();
 
         holder.title.setText(s.getName() + " - Ligne " + l.getLineNum());
         holder.recyclerView.setHasFixedSize(true);
@@ -104,13 +92,7 @@ public class StopLineHomeAdapter extends RecyclerView.Adapter<StopLineHomeAdapte
 
     @Override
     public int getItemCount() {
-        int count = 0;
-        for (Map.Entry<Stop, List<Line>> entry : stopListMap.entrySet()) {
-            for (Line l : entry.getValue()) {
-                count ++;
-            }
-        }
-        return count;
+        return favoriteStopLine.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

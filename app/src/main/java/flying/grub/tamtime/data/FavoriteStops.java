@@ -26,7 +26,7 @@ public class FavoriteStops {
 
 
     private List<Stop> favoriteStop;
-    private Map<Stop, List<Line>> favoriteStopLine;
+    private ArrayList<LineStop> favoriteStopLine;
     private Context context;
 
     public FavoriteStops(Context c) {
@@ -42,24 +42,21 @@ public class FavoriteStops {
             favoriteStop.add(DataParser.getDataParser().getMap().getStopByOurId(Integer.parseInt(stopId)));
         }
 
-        favoriteStopLine = new HashMap<>();
+        favoriteStopLine = new ArrayList<>();
         for (String info : defaultSharedPreferences.getStringSet(LINE_TAG, new HashSet<String>())) {
             String[] infos = info.split("<>");
             Stop s = DataParser.getDataParser().getMap().getStopByOurId(Integer.parseInt(infos[0]));
             Line l = DataParser.getDataParser().getMap().getLineByNum(Integer.parseInt(infos[1]));
-            addLineStop(l, s);
+            favoriteStopLine.add(new LineStop(s, l));
         }
         sort();
     }
 
+    // STOP
+
     public ArrayList<Stop> getFavoriteStop() {
         getFromPref();
         return new ArrayList<>(favoriteStop);
-    }
-
-    public HashMap<Stop, List<Line>> getFavStopLines() {
-        getFromPref();
-        return new HashMap<>(favoriteStopLine);
     }
 
     public boolean isInFav(Stop stop) {
@@ -77,54 +74,6 @@ public class FavoriteStops {
         sortAndPush();
     }
 
-    private void addLineStop(Line l, Stop s) {
-        if (favoriteStopLine.containsKey(s)) {
-            favoriteStopLine.get(s).add(l);
-        } else {
-            List<Line> lines = new ArrayList<>();
-            lines.add(l);
-            favoriteStopLine.put(s, lines);
-        }
-    }
-
-    private void removeLineStop(Line l, Stop s) {
-        if (favoriteStopLine.containsKey(s) && favoriteStopLine.get(s).size() > 1) {
-            favoriteStopLine.get(s).remove(l);
-        } else {
-            favoriteStopLine.remove(s);
-        }
-    }
-
-    public void addLineForStop(Line l, Stop s) {
-        addLineStop(l, s);
-        sortAndPush();
-    }
-
-    public void removeLineForStop(int position) {
-        int count = 0;
-        Stop s = null;
-        Line l = null;
-        for (Map.Entry<Stop, List<Line>> entry : favoriteStopLine.entrySet()) {
-            s = entry.getKey();
-            for (Line line : entry.getValue()) {
-                l = line;
-                count ++;
-                if (count == position) {
-                    break;
-                }
-            }
-            if (count == position) {
-                break;
-            }
-        }
-        removeLineForStop(l, s);
-    }
-
-    private void removeLineForStop(Line l, Stop s) {
-        removeLineStop(l, s);
-        sortAndPush();
-    }
-
     public void remove(int i) {
         favoriteStop.remove(i);
         sortAndPush();
@@ -133,6 +82,23 @@ public class FavoriteStops {
     public void remove(Stop stop) {
         favoriteStop.remove(stop);
         sortAndPush();
+    }
+
+    // STOP LINES
+
+    public void addLineStop(Line l, Stop s) {
+        favoriteStopLine.add(new LineStop(s, l));
+        sortAndPush();
+    }
+
+    public void removeLineStop(int position) {
+        favoriteStopLine.remove(position);
+        sortAndPush();
+    }
+
+    public ArrayList<LineStop> getFavStopLines() {
+        getFromPref();
+        return new ArrayList<>(favoriteStopLine);
     }
 
     private void sort() {
@@ -159,11 +125,8 @@ public class FavoriteStops {
         }
 
         ArrayList<String> favLineStop = new ArrayList<>();
-        for (Map.Entry<Stop, List<Line>> entry : favoriteStopLine.entrySet()) {
-            Stop s = entry.getKey();
-            for (Line l : entry.getValue()) {
-                favLineStop.add(s.getOurId() + "<>" + l.getLineNum());
-            }
+        for (LineStop lineStop : favoriteStopLine) {
+            favLineStop.add(lineStop.getStop().getOurId() + "<>" + lineStop.getLine().getLineNum());
         }
 
         editor.putStringSet(TAG, new HashSet<>(fav));
