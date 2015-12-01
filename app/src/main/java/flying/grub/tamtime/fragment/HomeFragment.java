@@ -1,38 +1,20 @@
 package flying.grub.tamtime.fragment;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import flying.grub.tamtime.R;
-import flying.grub.tamtime.activity.OneStopActivity;
-import flying.grub.tamtime.adapter.FavWelcomeAdapter;
-import flying.grub.tamtime.adapter.SeachResultAdapter;
-import flying.grub.tamtime.adapter.StopLineHomeAdapter;
-import flying.grub.tamtime.data.DataParser;
-import flying.grub.tamtime.data.FavoriteStops;
+import flying.grub.tamtime.adapter.HomeAdapter;
+import flying.grub.tamtime.data.FavoriteStopLine;
 import flying.grub.tamtime.data.Line;
 import flying.grub.tamtime.data.MessageEvent;
 import flying.grub.tamtime.data.Stop;
@@ -51,32 +33,35 @@ public class HomeFragment extends Fragment {
     public SearchView searchView;
 
     private RecyclerView favStopLinesRecycler;
-    private StopLineHomeAdapter stopLineHomeAdapter;
-    private FavoriteStops favoriteStops;
+    private HomeAdapter homeAdapter;
+    private FavoriteStopLine favoriteStopLine;
 
     private UpdateRunnable updateRunnable;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.view_recycler, container, false);
         setHasOptionsMenu(true);
 
         getActivity().setTitle(getString(R.string.home));
 
+        favoriteStopLine = new FavoriteStopLine(getContext());
+
         favHomeView = new FavHomeView(getActivity());
-        favHomeView.setUpdateStopLine(new FavHomeView.UpdateStopLine() {
+        favHomeView.setUpdateStopLine(new FavHomeView.AddStopLine() {
             @Override
-            public void update() {
+            public void update(Stop stop, Line line) {
+                favoriteStopLine.addLineStop(line, stop);
                 setupFavStopLine();
             }
         });
 
         searchView = new SearchView(getActivity());
 
-        favStopLinesRecycler = (RecyclerView) view.findViewById(R.id.stop_lines);
-        RecyclerView.LayoutManager layoutManagerSL = new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        favStopLinesRecycler.setLayoutManager(layoutManagerSL);
+        favStopLinesRecycler = (RecyclerView) view.findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        favStopLinesRecycler.setLayoutManager(layoutManager);
         favStopLinesRecycler.setItemAnimator(new DefaultItemAnimator());
         favStopLinesRecycler.setHasFixedSize(false);
         favStopLinesRecycler.setBackgroundColor(getResources().getColor(R.color.windowBackgroundCard));
@@ -86,8 +71,8 @@ public class HomeFragment extends Fragment {
     }
 
     public void setupFavStopLine() {
-        stopLineHomeAdapter = new StopLineHomeAdapter(favoriteStops.getFavStopLines(), getActivity());
-        stopLineHomeAdapter.SetOnItemClickListener(new StopLineHomeAdapter.OnItemClickListener() {
+        homeAdapter = new HomeAdapter(favoriteStopLine.getFavStopLines(), getActivity(), favHomeView, searchView);
+        homeAdapter.SetOnItemClickListener(new HomeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, final int position) {
                 PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -98,9 +83,8 @@ public class HomeFragment extends Fragment {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        favoriteStops.removeLineStop(position);
-                        stopLineHomeAdapter = new StopLineHomeAdapter(favoriteStops.getFavStopLines(), getActivity());
-                        favStopLinesRecycler.swapAdapter(stopLineHomeAdapter, true);
+                        favoriteStopLine.removeLineStop(position -1);
+                        setupFavStopLine();
                         return true;
                     }
                 });
@@ -108,7 +92,7 @@ public class HomeFragment extends Fragment {
                 popup.show();
             }
         });
-        favStopLinesRecycler.swapAdapter(stopLineHomeAdapter, true);
+        favStopLinesRecycler.swapAdapter(homeAdapter, true);
     }
 
     @Override

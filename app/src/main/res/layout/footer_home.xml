@@ -30,7 +30,7 @@
 
             <ImageView
                 android:src="@drawable/ic_favorite_black_24dp"
-                android:id="@+id/search"
+                android:id="@+id/fav_icon"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:padding="13dp"/>

@@ -27,6 +27,7 @@ import flying.grub.tamtime.adapter.DividerItemDecoration;
 import flying.grub.tamtime.adapter.OneStopAdapter;
 import flying.grub.tamtime.adapter.ReportAdapter;
 import flying.grub.tamtime.data.DataParser;
+import flying.grub.tamtime.data.FavoriteStopLine;
 import flying.grub.tamtime.data.FavoriteStops;
 import flying.grub.tamtime.data.Line;
 import flying.grub.tamtime.data.MessageEvent;
@@ -46,6 +47,7 @@ public class OneStopActivity extends AppCompatActivity {
     private SlidingTabLayout slidingTabLayout;
 
     private FavoriteStops favoriteStops;
+    private FavoriteStopLine favoriteStopLine;
 
     private int stopId;
     private Stop stop;
@@ -80,6 +82,7 @@ public class OneStopActivity extends AppCompatActivity {
         viewPager.setAdapter(new OneStopPageAdapter(getSupportFragmentManager()));
 
         favoriteStops = new FavoriteStops(getApplicationContext());
+        favoriteStopLine = new FavoriteStopLine(getApplicationContext());
 
         slidingTabLayout = new SlidingTabLayout(getApplicationContext());
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
@@ -154,7 +157,7 @@ public class OneStopActivity extends AppCompatActivity {
                             public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 Stop s = stop;
                                 Line l = s.getLines().get(which);
-                                favoriteStops.addLineStop(l, s);
+                                favoriteStopLine.addLineStop(l, s);
                                 dialog.dismiss();
                             }
                         }).build();

@@ -1,10 +1,8 @@
 package flying.grub.tamtime.adapter;
 
-import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.UiThread;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,35 +12,41 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.activity.OneStopActivity;
 import flying.grub.tamtime.data.Line;
 import flying.grub.tamtime.data.LineStop;
 import flying.grub.tamtime.data.Stop;
-import flying.grub.tamtime.data.StopTimes;
+import flying.grub.tamtime.layout.FavHomeView;
+import flying.grub.tamtime.layout.SearchView;
 
 /**
  * Created by fly on 11/28/15.
  */
-public class StopLineHomeAdapter extends RecyclerView.Adapter<StopLineHomeAdapter.ViewHolder> {
+public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = StopLineHomeAdapter.class.getSimpleName();
+    private static final String TAG = HomeAdapter.class.getSimpleName();
+
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_FOOTER = 2;
 
     public OnItemClickListener mItemClickListener;
     private ArrayList<LineStop> favoriteStopLine;
     private FragmentActivity context;
 
-    public StopLineHomeAdapter(ArrayList<LineStop> stopLines, FragmentActivity context) {
+    private FavHomeView favHomeView;
+    private SearchView searchView;
+
+    public HomeAdapter(ArrayList<LineStop> stopLines, FragmentActivity context, FavHomeView favHomeView, SearchView searchView) {
         this.favoriteStopLine = stopLines;
         this.context = context;
+        this.favHomeView = favHomeView;
+        this.searchView = searchView;
     }
 
     public interface OnItemClickListener {
@@ -54,18 +58,28 @@ public class StopLineHomeAdapter extends RecyclerView.Adapter<StopLineHomeAdapte
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_card_home_line_stop, parent, false);
-        // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER) {
+            View v = searchView.getView(parent);
+            return new ViewHolderCustom(v);
+        } else if (viewType == TYPE_ITEM) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_card_home_line_stop, parent, false);
+            return new ViewHolder(v);
+        } else if (viewType == TYPE_FOOTER) {
+            View v = favHomeView.getView(parent);
+            return new ViewHolderCustom(v);
+        }
+        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        LineStop lineStop = favoriteStopLine.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holderParam, int position) {
+        if (holderParam instanceof ViewHolderCustom) {
+            return;
+        }
+        ViewHolder holder = (ViewHolder) holderParam;
+        LineStop lineStop = favoriteStopLine.get(position -1);
         Stop s = lineStop.getStop();
         Line l = lineStop.getLine();
 
@@ -90,9 +104,32 @@ public class StopLineHomeAdapter extends RecyclerView.Adapter<StopLineHomeAdapte
         holder.recyclerView.setAdapter(adapter);
     }
 
+    @UiThread
+    public void dataSetChanged() {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return TYPE_HEADER;
+        } else if (position == getItemCount()-1) {
+            return TYPE_FOOTER;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
+
     @Override
     public int getItemCount() {
-        return favoriteStopLine.size();
+        return favoriteStopLine.size() + 2;
+    }
+
+    public class ViewHolderCustom extends RecyclerView.ViewHolder {
+
+        public ViewHolderCustom(View itemView) {
+            super(itemView);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

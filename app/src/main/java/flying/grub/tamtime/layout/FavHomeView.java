@@ -1,7 +1,12 @@
 package flying.grub.tamtime.layout;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +16,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -21,15 +28,17 @@ import java.util.ArrayList;
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.activity.OneStopActivity;
 import flying.grub.tamtime.adapter.FavWelcomeAdapter;
+import flying.grub.tamtime.adapter.HomeAdapter;
+import flying.grub.tamtime.data.FavoriteStopLine;
 import flying.grub.tamtime.data.FavoriteStops;
 import flying.grub.tamtime.data.Line;
 import flying.grub.tamtime.data.Stop;
-import flying.grub.tamtime.data.UpdateRunnable;
+import flying.grub.tamtime.fragment.FavoriteStopsFragment;
 
 /**
  * Created by fly on 11/29/15.
  */
-public class FavHomeView implements HomeLayout {
+public class FavHomeView {
 
     private LinearLayout favLayout;
     private RecyclerView favStopRecyclerView;
@@ -38,47 +47,38 @@ public class FavHomeView implements HomeLayout {
 
     public FragmentActivity context;
 
-    public interface UpdateStopLine {
-        void update();
+    public interface AddStopLine {
+        void update(Stop stop, Line line);
     }
 
-    public  UpdateStopLine updateStopLine;
+    public AddStopLine updateStopLine;
 
-    public void setUpdateStopLine(UpdateStopLine updateStopLine) {
-        this.updateStopLine = updateStopLine;
+    public void setUpdateStopLine(AddStopLine addStopLine) {
+        this.updateStopLine = addStopLine;
     }
 
     public FavHomeView(FragmentActivity context) {
         this.context = context;
+        favoriteStops = new FavoriteStops(context);
     }
 
-    @Override
-    public boolean isHeader() {
-        return false;
-    }
+    public View getView(ViewGroup parent) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.footer_home, parent, false);
 
-    @Override
-    public boolean isFooter() {
-        return false;
-    }
-
-    @Override
-    public View getView(LayoutInflater inflater, ViewGroup container) {
-        View view = inflater.inflate(R.layout.item_fav_stop_welcome, container, false);
         favLayout = (LinearLayout) view.findViewById(R.id.fav_stop_recycler);
         LinearLayout linearLayout = (LinearLayout) favLayout.findViewById(R.id.progress);
         linearLayout.setVisibility(View.GONE);
         TextView textView = (TextView) favLayout.findViewById(R.id.empty_view);
         textView.setText(context.getString(R.string.no_favorite_stop));
 
-        favStopRecyclerView = (RecyclerView) favLayout.findViewById(R.id.recycler_view);
 
+        favStopRecyclerView = (RecyclerView) favLayout.findViewById(R.id.recycler_view);
         favStopRecyclerView.setHasFixedSize(false);
 
         RecyclerView.LayoutManager layoutManagerFav = new org.solovyev.android.views.llm.LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         favStopRecyclerView.setLayoutManager(layoutManagerFav);
         favStopRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        favoriteStops = new FavoriteStops(context);
 
         if (favoriteStops.getFavoriteStop().size() == 0) {
             textView.setVisibility(View.VISIBLE);
@@ -121,8 +121,7 @@ public class FavHomeView implements HomeLayout {
                                         public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                             Stop s = favoriteStops.getFavoriteStop().get(position);
                                             Line l = s.getLines().get(which);
-                                            favoriteStops.addLineStop(l, s);
-                                            updateStopLine.update();
+                                            updateStopLine.update(s, l);
                                             dialog.dismiss();
                                         }
                                     }).build();

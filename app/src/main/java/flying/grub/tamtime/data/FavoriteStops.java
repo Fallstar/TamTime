@@ -22,11 +22,7 @@ import flying.grub.tamtime.activity.MainActivity;
 public class FavoriteStops {
     private static final String TAG = FavoriteStops.class.getSimpleName();
 
-    private static final String LINE_TAG = "LINESTOP";
-
-
     private List<Stop> favoriteStop;
-    private ArrayList<LineStop> favoriteStopLine;
     private Context context;
 
     public FavoriteStops(Context c) {
@@ -41,18 +37,8 @@ public class FavoriteStops {
         for (String stopId : defaultSharedPreferences.getStringSet(TAG, new HashSet<String>())) {
             favoriteStop.add(DataParser.getDataParser().getMap().getStopByOurId(Integer.parseInt(stopId)));
         }
-
-        favoriteStopLine = new ArrayList<>();
-        for (String info : defaultSharedPreferences.getStringSet(LINE_TAG, new HashSet<String>())) {
-            String[] infos = info.split("<>");
-            Stop s = DataParser.getDataParser().getMap().getStopByOurId(Integer.parseInt(infos[0]));
-            Line l = DataParser.getDataParser().getMap().getLineByNum(Integer.parseInt(infos[1]));
-            favoriteStopLine.add(new LineStop(s, l));
-        }
         sort();
     }
-
-    // STOP
 
     public ArrayList<Stop> getFavoriteStop() {
         getFromPref();
@@ -84,23 +70,6 @@ public class FavoriteStops {
         sortAndPush();
     }
 
-    // STOP LINES
-
-    public void addLineStop(Line l, Stop s) {
-        favoriteStopLine.add(new LineStop(s, l));
-        sortAndPush();
-    }
-
-    public void removeLineStop(int position) {
-        favoriteStopLine.remove(position);
-        sortAndPush();
-    }
-
-    public ArrayList<LineStop> getFavStopLines() {
-        getFromPref();
-        return new ArrayList<>(favoriteStopLine);
-    }
-
     private void sort() {
         Collections.sort(favoriteStop, new Comparator<Stop>() {
             @Override
@@ -124,14 +93,7 @@ public class FavoriteStops {
             fav.add("" + s.getOurId());
         }
 
-        ArrayList<String> favLineStop = new ArrayList<>();
-        for (LineStop lineStop : favoriteStopLine) {
-            favLineStop.add(lineStop.getStop().getOurId() + "<>" + lineStop.getLine().getLineNum());
-        }
-
         editor.putStringSet(TAG, new HashSet<>(fav));
-        editor.putStringSet(LINE_TAG, new HashSet<>(favLineStop));
-
         editor.commit();
     }
 }

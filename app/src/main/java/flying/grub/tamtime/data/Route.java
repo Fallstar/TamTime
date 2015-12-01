@@ -67,7 +67,7 @@ public class Route {
     }
 
     public String getDirection() {
-        return this.direction;
+        return "Vers " + this.direction;
     }
 
     public int getDirNum() {

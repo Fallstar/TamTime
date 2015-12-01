@@ -1,6 +1,5 @@
 package flying.grub.tamtime.layout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +19,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 import flying.grub.tamtime.R;
 import flying.grub.tamtime.activity.OneStopActivity;
+import flying.grub.tamtime.adapter.HomeAdapter;
 import flying.grub.tamtime.adapter.SeachResultAdapter;
 import flying.grub.tamtime.data.DataParser;
 import flying.grub.tamtime.data.Stop;
@@ -30,40 +30,31 @@ import flying.grub.tamtime.data.Stop;
 /**
  * Created by fly on 11/29/15.
  */
-public class SearchView implements HomeLayout {
+public class SearchView {
+
+    private static final String TAG = SearchView.class.getSimpleName();
 
     public FragmentActivity context;
-
-    public SearchView(FragmentActivity context) {
-        this.context = context;
-    }
-
     private RecyclerView researchRecyclerView;
     private SeachResultAdapter researchAdapter;
 
     private ArrayList<Stop> searchStop;
     private EditText search;
 
-    @Override
-    public boolean isHeader() {
-        return true;
+    public SearchView(FragmentActivity context) {
+        this.context = context;
     }
 
-    @Override
-    public boolean isFooter() {
-        return false;
-    }
-
-    @Override
-    public View getView(LayoutInflater inflater, ViewGroup container) {
-
-        View view = inflater.inflate(R.layout.item_research_welcome, container, false);
+    public View getView(ViewGroup parent) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.header_home, parent, false);
         RecyclerView.LayoutManager layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
 
         researchRecyclerView = (RecyclerView) view.findViewById(R.id.result);
         researchRecyclerView.setLayoutManager(layoutManager);
         researchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         researchRecyclerView.setHasFixedSize(false);
+        researchRecyclerView.swapAdapter(null, true);
         search = (EditText) view.findViewById(R.id.search_text);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -122,6 +113,7 @@ public class SearchView implements HomeLayout {
 
         protected void onPostExecute(ArrayList<Stop> stops) {
             searchStop = stops;
+            Log.d(TAG, stops.toString());
             researchAdapter = new SeachResultAdapter(searchStop);
             researchAdapter.SetOnItemClickListener(new SeachResultAdapter.OnItemClickListener() {
                 @Override

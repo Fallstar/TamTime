@@ -1,5 +1,6 @@
 package flying.grub.tamtime.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,10 +48,16 @@ public class AllLinesAdapter extends RecyclerView.Adapter<AllLinesAdapter.ViewHo
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.mTextView.setText("Ligne " + lines.get(position).getLineId());
-        //holder.mImageView.setImageResource(mImageset[position]);
+        String text;
+        if (position < 4) {
+            text = "Tram";
+            holder.mImageView.setImageResource(R.drawable.ic_directions_subway_black_24dp);
+        } else {
+            text = "Bus";
+            holder.mImageView.setImageResource(R.drawable.ic_directions_bus_black_24dp);
+        }
+        text = text + " " + lines.get(position).getLineId();
+        holder.mTextView.setText(text);
     }
 
                 // Return the size of your dataset (invoked by the layout manager)
