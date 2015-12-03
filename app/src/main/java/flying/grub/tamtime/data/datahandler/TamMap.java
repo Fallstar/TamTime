@@ -167,6 +167,7 @@ public class TamMap implements DataHandler {
 
     public ArrayList<Stop> searchInStops(String search, int number) {
         ArrayList<Stop> res = new ArrayList<>();
+        String normalizedSearch = normalize(search);
         for (Stop s : stopList) {
             if (number != -1 && number == res.size()) {
                 break;
@@ -174,7 +175,7 @@ public class TamMap implements DataHandler {
             if (s.getNormalisedName() == null) {
                 s.setNormalisedName(normalize(s.getName()));
             }
-            if (s.getNormalisedName().contains(normalize(search))) {
+            if (s.getNormalisedName().contains(normalizedSearch)) {
                 res.add(s);
             }
         }

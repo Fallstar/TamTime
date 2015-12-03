@@ -101,13 +101,14 @@ public class HomeFragment extends Fragment {
         EventBus.getDefault().register(this);
         updateRunnable = new UpdateRunnable();
         updateRunnable.run();
-        updateRunnable.stop();
+
     }
 
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+        updateRunnable.stop();
     }
 
     public void onEvent(MessageEvent event){
