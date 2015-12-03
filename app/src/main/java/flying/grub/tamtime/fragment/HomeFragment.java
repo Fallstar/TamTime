@@ -105,10 +105,10 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
         EventBus.getDefault().unregister(this);
-        super.onStop();
         updateRunnable.stop();
+        super.onPause();
     }
 
     public void onEvent(MessageEvent event){

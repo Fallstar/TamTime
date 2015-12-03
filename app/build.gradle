@@ -9,7 +9,7 @@ android {
         applicationId "flying.grub.tamtime"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 15
+        versionCode 16
         versionName "0.9.7-BETA"
     }
     buildTypes {
