@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TamTime</string>
 
-    <string name="home">Acceuil</string>
+    <string name="home">Accueil</string>
     <string name="all_infos">Infos</string>
     <string name="all_lines">Lignes</string>
     <string name="all_stops">Arrêts</string>

@@ -1,4 +1,4 @@
-package flying.grub.tamtime.navigation;
+package flying.grub.tamtime.layout;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -66,6 +66,7 @@ public class Indicator extends View implements ViewPager.OnPageChangeListener  {
         }
 
         Paint paint = new Paint();
+        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(context.getResources().getColor(R.color.windowBackground));
         for (int i = 0; i < pageNumber; i++) {
             if (i == selected) {
