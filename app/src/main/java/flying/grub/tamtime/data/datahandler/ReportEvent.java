@@ -35,9 +35,9 @@ import flying.grub.tamtime.data.VolleyApp;
 public class ReportEvent implements DataHandler {
 
     private static final String TAG = ReportEvent.class.getSimpleName();
-    private static final String JSON_REPORT = "https://tam.flyingrub.me/report.php?r=getJson";
-    private static final String POST_REPORT = "https://tam.flyingrub.me/report.php?r=newReport";
-    private static final String CONFIRM_REPORT = "https://tam.flyingrub.me/report.php?r=confirmReport";
+    private static final String JSON_REPORT = "https://tam.daze.space/report.php?r=getJson";
+    private static final String POST_REPORT = "https://tam.daze.space/report.php?r=newReport";
+    private static final String CONFIRM_REPORT = "https://tam.daze.space/report.php?r=confirmReport";
 
     private ArrayList<Report> reportList;
     private Context context;
