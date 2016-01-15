@@ -88,7 +88,7 @@ public class AllLinesFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
