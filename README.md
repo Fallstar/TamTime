@@ -1,7 +1,10 @@
 # TamTime
 Android app which will display the shedule of the TRAM of Montpellier.
 
-This app is a work in progress beta. You can request a beta access with my email.
+## BETA ACCESS
+> https://plus.google.com/u/0/communities/101937257454616939099
+
+Join this communitie and you will be able to download the app from the playstore.
 
 
 ### Soft Used:
