@@ -27,7 +27,7 @@ import flying.grub.tamtime.data.VolleyApp;
 public class RealTimes implements DataHandler {
 
     private static final String TAG = ReportEvent.class.getSimpleName();
-    private static final String JSON_REALTIME = "http://www.tam-direct.com/webservice/data.php?pattern=getDetails";
+    private static final String JSON_REALTIME = "http://tam.mobitrans.fr/webservice/data.php?pattern=getDetails";
     private ArrayList<StopTimes> stpTimesList;
 
 

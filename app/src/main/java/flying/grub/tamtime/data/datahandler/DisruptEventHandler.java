@@ -42,8 +42,8 @@ public class DisruptEventHandler implements DataHandler {
     private Context context;
     public ArrayList<DisruptEvent> disruptList;
 
-    private static final String JSON_ALL_DISRUPT = "http://www.tam-direct.com/webservice/data.php?pattern=cityway&path=GetDisruptedLines%2Fjson%3Fkey%3DTAM%26langID%3D1";
-    private static final String JSON_LINE_DISRUPT = "http://www.tam-direct.com/webservice/data.php?pattern=cityway&path=GetLineDisruptions%2Fjson%3Fkey%3DTAM%26langID%3D1%26ligID%3D";
+    private static final String JSON_ALL_DISRUPT = "http://tam.mobitrans.fr/webservice/data.php?pattern=cityway&path=GetDisruptedLines%2Fjson%3Fkey%3DTAM%26langID%3D1";
+    private static final String JSON_LINE_DISRUPT = "http://tam.mobitrans.fr/webservice/data.php?pattern=cityway&path=GetLineDisruptions%2Fjson%3Fkey%3DTAM%26langID%3D1%26ligID%3D";
 
 
     public DisruptEventHandler(Context context) {
